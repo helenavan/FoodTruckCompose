@@ -5,6 +5,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,10 +20,10 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -44,6 +45,8 @@ import com.toulousehvl.myfoodtruck.screens.HomeScreen
 import com.toulousehvl.myfoodtruck.screens.InformationScreen
 import com.toulousehvl.myfoodtruck.screens.TrucksListScreen
 import com.toulousehvl.myfoodtruck.ui.theme.MyFoodTruckTheme
+import com.toulousehvl.myfoodtruck.ui.theme.YellowBanane
+import com.toulousehvl.myfoodtruck.ui.theme.YellowLite
 
 class MainActivity : ComponentActivity() {
 
@@ -70,25 +73,29 @@ fun MainScreen(
 ) {
     Scaffold(
         bottomBar = {
-            BottomAppBar(modifier = Modifier) {
+            BottomAppBar(modifier = Modifier, containerColor = YellowBanane) {
                 BottomNavigationBar(navController = navController)
             }
         },
         floatingActionButton = {
-            FloatingActionButton(onClick = {}) {
-                Icon(Icons.Filled.Add, "Add")
+            FloatingActionButton(
+                onClick = {},
+                containerColor = YellowBanane
+            ) {
+                Icon(Icons.Filled.Add, "Add", tint = Color.Black)
             }
         }
     ) { innerPadding ->
         Box(
-            modifier = Modifier.padding(
-                PaddingValues(
-                    0.dp,
-                    0.dp,
-                    0.dp,
-                    innerPadding.calculateBottomPadding()
+            modifier = Modifier
+                .padding(
+                    PaddingValues(
+                        0.dp,
+                        0.dp,
+                        0.dp,
+                        innerPadding.calculateBottomPadding()
+                    )
                 )
-            )
         ) {
             Navigations(navController = navController)
         }
@@ -111,14 +118,19 @@ fun BottomNavigationBar(navController: NavController) {
         }
     }
 
-    NavigationBar {
-        contentColorFor(backgroundColor = Color.Blue)
+    NavigationBar(containerColor = YellowBanane) {
         items.forEachIndexed { index, item ->
             NavigationBarItem(
+                modifier = Modifier.background(color = YellowBanane),
                 alwaysShowLabel = true,
-                icon = { Icon(item.icon!!, contentDescription = item.title) },
-                label = { Text(item.title) },
+                icon = {
+                    Icon(item.icon!!, contentDescription = item.title, tint = Color.Black)
+                },
+                label = { Text(item.title, color = Color.Gray) },
                 selected = selectedItem == index,
+                colors = NavigationBarItemDefaults.colors(
+                    indicatorColor = YellowLite
+                ),
                 onClick = {
                     selectedItem = index
                     currentRoute = item.route

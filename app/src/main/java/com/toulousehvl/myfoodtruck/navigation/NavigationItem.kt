@@ -8,6 +8,6 @@ import androidx.compose.ui.graphics.vector.ImageVector
 
 sealed class NavigationItem(var route: String, val icon: ImageVector?, var title: String) {
     data object Home : NavigationItem("Home", Icons.Rounded.Map, "Home")
-    data object History : NavigationItem("History", Icons.Rounded.List, "History")
+    data object History : NavigationItem("Liste", Icons.Rounded.List, "Liste")
     data object Profile : NavigationItem("Profile", Icons.Rounded.Info, "Profile")
 }

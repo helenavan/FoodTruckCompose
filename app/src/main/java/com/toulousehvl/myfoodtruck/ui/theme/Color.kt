@@ -15,5 +15,6 @@ val RedDark = Color(0xFFF95759)
 val Orange = Color(0xFFFDA099)
 
 val YellowBanane = Color(0xFFFFDE8D)
+val YellowLite = Color(0xFFFFF1C2)
 val OrangeDark = Color(0xFFDE7047)
 val DarkGreen = Color(0xFF8AC2B0)
