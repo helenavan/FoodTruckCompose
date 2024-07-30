@@ -1,7 +1,6 @@
 plugins {
-    id("com.android.application")
-    id("kotlin-android")
-    id("com.google.gms.google-services")
+    alias(libs.plugins.android.application)
+    alias(libs.plugins.jetbrains.kotlin.android)
 }
 
 android {
@@ -31,11 +30,11 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
     }
     kotlinOptions {
-        jvmTarget = "17"
+        jvmTarget = "1.8"
     }
     buildFeatures {
         compose = true
@@ -52,7 +51,7 @@ android {
 
 dependencies {
     val osmdroidVersion by extra( "6.1.18")
-    val koinVersion  by extra("4.0.0-RC1")
+    val koinVersion  by extra("3.5.6")
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
@@ -65,6 +64,13 @@ dependencies {
     implementation(libs.androidx.material.icons.extended)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.androidx.runtime.livedata)
+    implementation(libs.ui)
+    implementation(libs.androidx.navigation.compose)
+
+    //preview
+    debugImplementation (libs.ui.tooling)
+    implementation (libs.ui.tooling.preview)
+    implementation (libs.androidx.appcompat)
 
     // Koin
     implementation(libs.kotlinx.serialization.json)
@@ -72,12 +78,7 @@ dependencies {
 
     // Koin for Android
     implementation(libs.insert.koin.koin.android)
-    // Koin AndroidX Scope
-    implementation(libs.insert.koin.koin.androidx.scope)
-    // Koin AndroidX ViewModel
-    implementation(libs.insert.koin.koin.androidx.viewmodel)
-    // Koin AndroidX Fragment
-    implementation(libs.koin.androidx.fragment)
+
     // Koin AndroidX WorkManager
     implementation(libs.koin.androidx.workmanager)
 

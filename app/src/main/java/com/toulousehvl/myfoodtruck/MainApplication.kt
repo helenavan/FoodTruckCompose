@@ -1,6 +1,11 @@
 package com.toulousehvl.myfoodtruck
 
 import android.app.Application
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Fastfood
+import androidx.compose.material.icons.filled.Map
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.ui.graphics.vector.ImageVector
 import com.toulousehvl.myfoodtruck.di.AppModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
