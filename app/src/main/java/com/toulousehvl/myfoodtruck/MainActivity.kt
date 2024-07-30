@@ -13,9 +13,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.rounded.Info
-import androidx.compose.material.icons.rounded.List
-import androidx.compose.material.icons.rounded.Map
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -32,7 +29,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -41,6 +37,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.toulousehvl.myfoodtruck.navigation.NavigationItem
 import com.toulousehvl.myfoodtruck.ui.theme.MyFoodTruckTheme
 
 class MainActivity : ComponentActivity() {
@@ -91,12 +88,6 @@ fun MainScreen(
             Navigations(navController = navController)
         }
     }
-}
-
-sealed class NavigationItem(var route: String, val icon: ImageVector?, var title: String) {
-    data object Home : NavigationItem("Home", Icons.Rounded.Map, "Home")
-    data object History : NavigationItem("History", Icons.Rounded.List, "History")
-    data object Profile : NavigationItem("Profile", Icons.Rounded.Info, "Profile")
 }
 
 @Composable
