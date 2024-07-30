@@ -22,6 +22,7 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -29,6 +30,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -38,6 +40,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.toulousehvl.myfoodtruck.navigation.NavigationItem
+import com.toulousehvl.myfoodtruck.screens.HomeScreen
+import com.toulousehvl.myfoodtruck.screens.InformationScreen
+import com.toulousehvl.myfoodtruck.screens.TrucksListScreen
 import com.toulousehvl.myfoodtruck.ui.theme.MyFoodTruckTheme
 
 class MainActivity : ComponentActivity() {
@@ -107,6 +112,7 @@ fun BottomNavigationBar(navController: NavController) {
     }
 
     NavigationBar {
+        contentColorFor(backgroundColor = Color.Blue)
         items.forEachIndexed { index, item ->
             NavigationBarItem(
                 alwaysShowLabel = true,
@@ -138,27 +144,12 @@ fun Navigations(navController: NavHostController) {
             HomeScreen()
         }
         composable(NavigationItem.History.route) {
-            HistoryScreen()
+            TrucksListScreen()
         }
         composable(NavigationItem.Profile.route) {
-            ProfileScreen()
+            InformationScreen()
         }
     }
-}
-
-@Composable
-fun HomeScreen() {
-    CenterText(text = "Home")
-}
-
-@Composable
-fun HistoryScreen() {
-    CenterText(text = "History")
-}
-
-@Composable
-fun ProfileScreen() {
-    CenterText(text = "Profile")
 }
 
 @Composable
