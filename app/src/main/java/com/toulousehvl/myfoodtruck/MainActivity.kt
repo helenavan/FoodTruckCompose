@@ -1,5 +1,6 @@
 package com.toulousehvl.myfoodtruck
 
+import android.content.Context
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -32,6 +33,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -40,6 +42,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.work.Configuration
 import com.toulousehvl.myfoodtruck.navigation.NavigationItem
 import com.toulousehvl.myfoodtruck.screens.HomeScreen
 import com.toulousehvl.myfoodtruck.screens.InformationScreen
@@ -153,7 +156,7 @@ fun BottomNavigationBar(navController: NavController) {
 fun Navigations(navController: NavHostController) {
     NavHost(navController, startDestination = NavigationItem.Home.route) {
         composable(NavigationItem.Home.route) {
-            HomeScreen()
+            HomeScreen(LocalContext.current)
         }
         composable(NavigationItem.History.route) {
             TrucksListScreen()
@@ -184,6 +187,6 @@ fun CenterText(text: String) {
 @Composable
 fun GreetingPreview() {
     MyFoodTruckTheme {
-        MainScreen(navController = rememberNavController())
+       // MainScreen(navController = rememberNavController())
     }
 }

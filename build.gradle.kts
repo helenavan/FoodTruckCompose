@@ -6,7 +6,7 @@ plugins {
 }
 buildscript {
     val kotlinVersion by extra("1.9.0")
-    val gradleVersion by extra("8.5.0")
+    val gradleVersion by extra("8.5.1")
     val googleServicesVersion by extra("4.3.14")
 
     dependencies {
