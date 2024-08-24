@@ -13,6 +13,7 @@ import org.osmdroid.config.Configuration
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapView
+import org.osmdroid.views.overlay.Marker
 
 @Composable
 fun MapView(
@@ -30,21 +31,24 @@ fun MapView(
             Configuration.getInstance().load(context, PreferenceManager.getDefaultSharedPreferences(context))
             mapView.apply {
                 setTileSource(TileSourceFactory.MAPNIK)
+                setMultiTouchControls(true)
             }
         },
         modifier = modifier.fillMaxSize()
     ) {
         onLoad?.invoke(mapView) // Callback une fois que la carte est prête
 
-        val mapController = mapView.controller
-        mapController.setZoom(9.5) // Réglage du zoom initial
-
         // Vérification des coordonnées utilisateur pour éviter des centres invalides
         uiState.userLat?.let { lat ->
             uiState.userLong?.let { long ->
                 val startPoint = GeoPoint(lat, long)
                 Log.d("HomeScreen", "startPoint ===> $startPoint")
-                mapController.setCenter(startPoint) // Centrer la carte sur la position de l'utilisateur
+                val userMarker = Marker(mapView)
+                userMarker.position = startPoint
+                userMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
+                mapView.overlays.add(userMarker)
+                mapView.controller.setCenter(startPoint)
+                mapView.controller.zoomTo(17.1)
             }
         }
     }
