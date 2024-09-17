@@ -2,6 +2,7 @@ package com.toulousehvl.myfoodtruck
 
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -27,14 +28,13 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -45,9 +45,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.toulousehvl.myfoodtruck.composables.RequestLocationPermission
-import com.toulousehvl.myfoodtruck.composables.getCurrentLocation
-import com.toulousehvl.myfoodtruck.composables.getLastUserLocation
-import com.toulousehvl.myfoodtruck.data.UserPosition
+import com.toulousehvl.myfoodtruck.composables.ShowDialogPermission
 import com.toulousehvl.myfoodtruck.navigation.NavigationItem
 import com.toulousehvl.myfoodtruck.screens.HomeScreen
 import com.toulousehvl.myfoodtruck.screens.InformationScreen
@@ -72,78 +70,28 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    // State variables to manage location information and permission result text
-                    var locationText by remember { mutableStateOf("No location obtained :(") }
-                    var showPermissionResultText by remember { mutableStateOf(false) }
-                    var permissionResultText by remember { mutableStateOf("Permission Granted...") }
-
-                    // Request location permission using a Compose function
                     RequestLocationPermission(
                         onPermissionGranted = {
-                            // Callback when permission is granted
-                            showPermissionResultText = true
-                            // Attempt to get the last known user location
-                            getLastUserLocation(
-                                this,
-                                onGetLastLocationSuccess = {
-                                    locationText =
-                                        "Location using LAST-LOCATION: ===> LATITUDE: ${it.first}, LONGITUDE: ${it.second}"
-
-                                    viewModel.getUserGeoPoint(UserPosition(it.first, it.second))
-                                },
-                                onGetLastLocationFailed = { exception ->
-                                    showPermissionResultText = true
-                                    locationText =
-                                        exception.localizedMessage ?: "Error Getting Last Location"
-                                },
-
-                            )
-                            fusedLocationProviderClient?.let { fusedLocationClient ->
-                                getCurrentLocation(
-                                    fusedLocationClient,
+                            fusedLocationProviderClient?.let {
+                                viewModel.onPermissionGranted(
                                     this,
-                                    onGetCurrentLocationSuccess = {
-                                        locationText =
-                                            "Location using CURRENT-LOCATION: LATITUDE === ${it.first}, LONGITUDE: ${it.second}"
-
-                                    },
-                                    onGetCurrentLocationFailed = {
-                                        showPermissionResultText = true
-                                        locationText =
-                                            it.localizedMessage
-                                                ?: "Error Getting Current Location ==="
-                                    }
+                                    it
                                 )
                             }
                         },
                         onPermissionDenied = {
-                            // Callback when permission is denied
-                            showPermissionResultText = true
-                            permissionResultText = "Permission Denied :("
+                            viewModel.onPermissionDenied()
                         },
                         onPermissionsRevoked = {
-                            // Callback when permission is revoked
-                            showPermissionResultText = true
-                            permissionResultText = "Permission Revoked :("
+                            viewModel.onPermissionsRevoked()
                         }
                     )
-                    // Compose UI layout using a Column
-                    Column(
-                        verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        // Display a message indicating the permission request process
-                        Text(
-                            text = "Requesting location permission...",
-                            textAlign = TextAlign.Center
-                        )
 
-                        // Display permission result and location information if available
-                        if (showPermissionResultText) {
-                            Text(text = permissionResultText, textAlign = TextAlign.Center)
-                            Text(text = locationText, textAlign = TextAlign.Center)
-                        }
-                    }
+                    ShowDialogPermission(
+                        viewModel.showPermissionResultText,
+                        viewModel.permissionResultText,
+                        viewModel.locationText
+                    )
 
                     MainScreen(navController = navController, viewModel = viewModel)
                 }
@@ -195,7 +143,7 @@ fun BottomNavigationBar(navController: NavController) {
         NavigationItem.History,
         NavigationItem.Profile,
     )
-    var selectedItem by remember { mutableStateOf(0) }
+    var selectedItem by remember { mutableIntStateOf(0) }
     var currentRoute by remember { mutableStateOf(NavigationItem.Home.route) }
 
     items.forEachIndexed { index, navigationItem ->

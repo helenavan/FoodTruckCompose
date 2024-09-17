@@ -38,7 +38,6 @@ fun RequestLocationPermission(
             Manifest.permission.ACCESS_FINE_LOCATION,
         )
     )
-    val lifecycleOwner = LocalLifecycleOwner.current
     // Use LaunchedEffect to handle permissions logic when the composition is launched.
     LaunchedEffect(key1 = permissionState) {
         // Check if all previously granted permissions are revoked.
