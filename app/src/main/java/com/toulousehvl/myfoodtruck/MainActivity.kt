@@ -2,7 +2,6 @@ package com.toulousehvl.myfoodtruck
 
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -14,10 +13,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.BottomAppBar
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
@@ -43,12 +39,11 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.google.android.gms.location.FusedLocationProviderClient
 import com.toulousehvl.myfoodtruck.composables.RequestLocationPermission
 import com.toulousehvl.myfoodtruck.composables.ShowDialogPermission
 import com.toulousehvl.myfoodtruck.navigation.NavigationItem
-import com.toulousehvl.myfoodtruck.screens.HomeScreen
 import com.toulousehvl.myfoodtruck.screens.InformationScreen
+import com.toulousehvl.myfoodtruck.screens.MapView
 import com.toulousehvl.myfoodtruck.screens.TrucksListScreen
 import com.toulousehvl.myfoodtruck.ui.theme.MyFoodTruckTheme
 import com.toulousehvl.myfoodtruck.ui.theme.YellowBanane
@@ -57,8 +52,6 @@ import com.toulousehvl.myfoodtruck.ui.theme.YellowLite
 class MainActivity : ComponentActivity() {
 
     private val viewModel: MainViewModel by viewModels<MainViewModel>()
-
-    private var fusedLocationProviderClient: FusedLocationProviderClient? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -72,12 +65,7 @@ class MainActivity : ComponentActivity() {
                 ) {
                     RequestLocationPermission(
                         onPermissionGranted = {
-                            fusedLocationProviderClient?.let {
-                                viewModel.onPermissionGranted(
-                                    this,
-                                    it
-                                )
-                            }
+                            viewModel.onPermissionGranted()
                         },
                         onPermissionDenied = {
                             viewModel.onPermissionDenied()
@@ -109,14 +97,6 @@ fun MainScreen(
         bottomBar = {
             BottomAppBar(modifier = Modifier, containerColor = YellowBanane) {
                 BottomNavigationBar(navController = navController)
-            }
-        },
-        floatingActionButton = {
-            FloatingActionButton(
-                onClick = {},
-                containerColor = YellowBanane
-            ) {
-                Icon(Icons.Filled.Add, "Add", tint = Color.Black)
             }
         }
     ) { innerPadding ->
@@ -187,7 +167,7 @@ fun BottomNavigationBar(navController: NavController) {
 fun Navigations(navController: NavHostController, viewModel: MainViewModel) {
     NavHost(navController, startDestination = NavigationItem.Home.route) {
         composable(NavigationItem.Home.route) {
-            HomeScreen(viewModel)
+            MapView(viewModel)
         }
         composable(NavigationItem.History.route) {
             TrucksListScreen()
