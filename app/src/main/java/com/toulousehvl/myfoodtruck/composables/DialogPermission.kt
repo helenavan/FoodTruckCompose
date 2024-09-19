@@ -7,12 +7,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.text.style.TextAlign
 
-// Compose UI layout using a Column
 @Composable
 fun ShowDialogPermission(
     showPermissionResultText: Boolean,
-    permissionResultText: String,
-    locationText: String
+    permissionResultText: String
 ) {
     Column(
         verticalArrangement = Arrangement.Center,
@@ -24,10 +22,9 @@ fun ShowDialogPermission(
             textAlign = TextAlign.Center
         )
 
-        // Display permission result and location information if available
+        // Display permission result
         if (showPermissionResultText) {
             Text(text = permissionResultText, textAlign = TextAlign.Center)
-            Text(text = locationText, textAlign = TextAlign.Center)
         }
     }
 }
