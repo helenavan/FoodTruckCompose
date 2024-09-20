@@ -41,6 +41,11 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.toulousehvl.myfoodtruck.composables.RequestLocationPermission
 import com.toulousehvl.myfoodtruck.composables.ShowDialogPermission
+import com.toulousehvl.myfoodtruck.composables.PermissionResultTex.onPermissionDenied
+import com.toulousehvl.myfoodtruck.composables.PermissionResultTex.onPermissionGranted
+import com.toulousehvl.myfoodtruck.composables.PermissionResultTex.onPermissionsRevoked
+import com.toulousehvl.myfoodtruck.composables.PermissionResultTex.permissionResultText
+import com.toulousehvl.myfoodtruck.composables.PermissionResultTex.showPermissionResultText
 import com.toulousehvl.myfoodtruck.navigation.NavigationItem
 import com.toulousehvl.myfoodtruck.screens.InformationScreen
 import com.toulousehvl.myfoodtruck.screens.MapView
@@ -65,20 +70,19 @@ class MainActivity : ComponentActivity() {
                 ) {
                     RequestLocationPermission(
                         onPermissionGranted = {
-                            viewModel.onPermissionGranted()
+                            onPermissionGranted()
                         },
                         onPermissionDenied = {
-                            viewModel.onPermissionDenied()
+                            onPermissionDenied()
                         },
                         onPermissionsRevoked = {
-                            viewModel.onPermissionsRevoked()
+                            onPermissionsRevoked()
                         }
                     )
 
                     ShowDialogPermission(
-                        viewModel.showPermissionResultText,
-                        viewModel.permissionResultText,
-                        viewModel.locationText
+                        showPermissionResultText,
+                        permissionResultText
                     )
 
                     MainScreen(navController = navController, viewModel = viewModel)

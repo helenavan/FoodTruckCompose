@@ -5,12 +5,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import com.google.firebase.firestore.FirebaseFirestore
+import com.toulousehvl.myfoodtruck.data.Truck
 import com.toulousehvl.myfoodtruck.data.UserPosition
-import org.osmdroid.util.GeoPoint
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 
-/**
- * UI state for the Home screen
- */
 sealed interface FoodTruckUserUiState {
     data class Success(val userPosition: UserPosition) : FoodTruckUserUiState
     data object Error : FoodTruckUserUiState
@@ -23,31 +23,48 @@ class MainViewModel : ViewModel() {
         private set
 
     // MutableState pour suivre la position de l'utilisateur
-    var locationFoodTrucks by mutableStateOf(GeoPoint(48.8583, 2.2944))
-        private set //private set est utilisé pour rendre une variable publique en lecture et privée en écriture
+    private val _dataState = MutableStateFlow<List<Truck>>(emptyList())
+    val dataState: StateFlow<List<Truck>> = _dataState
 
-
-    var locationText by mutableStateOf("No location obtained :(")
-        private set
-    var permissionResultText by mutableStateOf("Permission Granted...")
-        private set
-    var showPermissionResultText by mutableStateOf(false)
-        private set
-
-    fun onPermissionGranted() {
-        showPermissionResultText = true
-
-        Log.d("permission text", "===> $permissionResultText")
+    init {
+        fetchDataFromFirestore()
     }
 
-    fun onPermissionDenied() {
-        showPermissionResultText = true
-        permissionResultText = "Permission Denied :("
+    // Fonction pour récupérer des données Firestore
+    fun fetchDataFromFirestore() {
+        val db = FirebaseFirestore.getInstance()
+
+        db.collection("foodtrucks")
+            .get()
+            .addOnSuccessListener { result ->
+                val dataList = result.documents.mapNotNull { document ->
+                    document.toObject(Truck::class.java)?.copy(document.id)
+                }
+                _dataState.value = dataList
+
+                Log.d("Firestore", "Data fetched successfully ===> $dataList")
+            }
+            .addOnFailureListener { exception ->
+                Log.w("Firestore", "Error getting documents: ", exception)
+            }
     }
 
-    fun onPermissionsRevoked() {
-        showPermissionResultText = true
-        permissionResultText = "Permission Revoked :("
-    }
+    // Fonction pour ajouter des données dans Firestore
+    fun addDataToFirestore(data: String) {
+        val db = FirebaseFirestore.getInstance()
 
+        val newData = hashMapOf(
+            "fieldName" to data
+        )
+
+        db.collection("myCollection")
+            .add(newData)
+            .addOnSuccessListener {
+                Log.d("Firestore", "DocumentSnapshot added with ID: ${it.id}")
+                fetchDataFromFirestore() // Optionnel, mettre à jour les données
+            }
+            .addOnFailureListener { e ->
+                Log.w("Firestore", "Error adding document", e)
+            }
+    }
 }

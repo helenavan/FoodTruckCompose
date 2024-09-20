@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.compose)
+    alias(libs.plugins.google.gms.google.services)
 }
 
 android {
@@ -61,6 +62,8 @@ android {
 }
 
 dependencies {
+    implementation(libs.firebase.config)
+    implementation(libs.firebase.firestore)
     val osmdroidVersion by extra( "6.1.18")
     val koinVersion  by extra("3.5.6")
 

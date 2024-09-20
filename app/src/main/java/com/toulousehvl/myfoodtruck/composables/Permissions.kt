@@ -1,8 +1,12 @@
 package com.toulousehvl.myfoodtruck.composables
 
 import android.Manifest
+import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberMultiplePermissionsState
@@ -53,5 +57,28 @@ fun RequestLocationPermission(
                 onPermissionDenied()
             }
         }
+    }
+}
+
+object PermissionResultTex {
+    var showPermissionResultText by mutableStateOf(false)
+        private set
+    var permissionResultText by mutableStateOf("Permission Granted...")
+        private set
+
+    fun onPermissionGranted() {
+        showPermissionResultText = true
+
+        Log.d("permission text", "===> $permissionResultText")
+    }
+
+    fun onPermissionDenied() {
+        showPermissionResultText = true
+        permissionResultText = "Permission Denied === :("
+    }
+
+    fun onPermissionsRevoked() {
+        showPermissionResultText = true
+        permissionResultText = "Permission Revoked === :("
     }
 }

@@ -8,6 +8,6 @@ class TruckRepositoryImpl : TruckRepository {
 
     override fun findTruck(lat: Double, lon: Double): Truck? {
       //  TODO("Not yet implemented")
-        return _trucks.firstOrNull { it.lat == lat }
+        return _trucks.firstOrNull { it.latd == lat }
     }
 }

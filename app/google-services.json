@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "24092720182",
+    "firebase_url": "https://my-foodtruck-6ab49.firebaseio.com",
+    "project_id": "my-foodtruck-6ab49",
+    "storage_bucket": "my-foodtruck-6ab49.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:24092720182:android:8202cd3078722548d96c97",
+        "android_client_info": {
+          "package_name": "com.toulousehvl.myfoodtruck"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "24092720182-fe5bkhckc4o9odhlg0f72rslp5k77bbh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCPfAmPY7kLjuWFsuO5q_QYMMwSdxB7taY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "24092720182-fe5bkhckc4o9odhlg0f72rslp5k77bbh.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
