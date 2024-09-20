@@ -1,14 +1,20 @@
 package com.toulousehvl.myfoodtruck.feature
 
+import android.util.Log
 import org.osmdroid.events.MapEventsReceiver
 import org.osmdroid.util.GeoPoint
 
-class MyMapEventsReceiver : MapEventsReceiver {
-    override fun singleTapConfirmedHelper(p: GeoPoint?): Boolean {
-        return false
+class MyMapEventsReceiver(private val onGeoPointSelected: (GeoPoint) -> Unit) : MapEventsReceiver {
+
+    override fun singleTapConfirmedHelper(geoPoint: GeoPoint?): Boolean {
+       return false
     }
 
-    override fun longPressHelper(p: GeoPoint?): Boolean {
+    override fun longPressHelper(geoPoint: GeoPoint?): Boolean {
+        geoPoint?.let {
+            onGeoPointSelected(it)
+            Log.d("MyMapEventsReceiver", "Tap at ===> $geoPoint")
+        }
         return true
     }
 }
