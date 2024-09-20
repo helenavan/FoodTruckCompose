@@ -8,7 +8,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MyLocation
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -21,7 +20,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import com.toulousehvl.myfoodtruck.MainViewModel
 import com.toulousehvl.myfoodtruck.composables.rememberMapViewWithLifecycle
-import com.toulousehvl.myfoodtruck.feature.MyMapEventsReceiver
+import com.toulousehvl.myfoodtruck.service.MyMapEventsReceiver
 import com.toulousehvl.myfoodtruck.ui.theme.YellowBanane
 import org.osmdroid.config.Configuration
 import org.osmdroid.library.BuildConfig
