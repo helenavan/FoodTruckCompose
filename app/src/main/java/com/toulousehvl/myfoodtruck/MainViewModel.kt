@@ -5,15 +5,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import com.toulousehvl.myfoodtruck.data.Truck
 import com.toulousehvl.myfoodtruck.data.UserPosition
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.launch
 import org.osmdroid.util.GeoPoint
-import java.io.IOException
 
 /**
  * UI state for the Home screen
@@ -25,24 +18,36 @@ sealed interface FoodTruckUserUiState {
 }
 
 class MainViewModel : ViewModel() {
-    /** The mutable State that stores the status of the most recent request */
+    //TODO
     var foodTruckUserUiState: FoodTruckUserUiState by mutableStateOf(FoodTruckUserUiState.Loading)
         private set
 
-    private val _userLocation = MutableStateFlow(UserPosition())
-    val userLocation: StateFlow<UserPosition> = _userLocation.asStateFlow()
+    // MutableState pour suivre la position de l'utilisateur
+    var locationFoodTrucks by mutableStateOf(GeoPoint(48.8583, 2.2944))
+        private set //private set est utilisé pour rendre une variable publique en lecture et privée en écriture
 
-    fun getUserGeoPoint(userPosition: UserPosition) {
-       viewModelScope.launch {
-           _userLocation.value = userPosition
-       /**   foodTruckUserUiState = FoodTruckUserUiState.Loading
-            foodTruckUserUiState = try {
-                FoodTruckUserUiState.Success(userPosition)
 
-            } catch (e: IOException) {
-                FoodTruckUserUiState.Error
-            }**/
-        }
+    var locationText by mutableStateOf("No location obtained :(")
+        private set
+    var permissionResultText by mutableStateOf("Permission Granted...")
+        private set
+    var showPermissionResultText by mutableStateOf(false)
+        private set
+
+    fun onPermissionGranted() {
+        showPermissionResultText = true
+
+        Log.d("permission text", "===> $permissionResultText")
+    }
+
+    fun onPermissionDenied() {
+        showPermissionResultText = true
+        permissionResultText = "Permission Denied :("
+    }
+
+    fun onPermissionsRevoked() {
+        showPermissionResultText = true
+        permissionResultText = "Permission Revoked :("
     }
 
 }
