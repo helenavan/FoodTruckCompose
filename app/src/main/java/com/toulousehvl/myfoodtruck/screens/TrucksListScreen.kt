@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -30,17 +31,29 @@ import com.toulousehvl.myfoodtruck.MainViewModel
 import com.toulousehvl.myfoodtruck.R
 import com.toulousehvl.myfoodtruck.data.CategoryTruck
 import com.toulousehvl.myfoodtruck.data.CategoryTruck.Companion.toCategoryTruckString
+import com.toulousehvl.myfoodtruck.data.ResultWrapper
 import com.toulousehvl.myfoodtruck.data.Truck
 
 @Composable
 fun TrucksListScreen(viewModel: MainViewModel = viewModel()) {
 
     val trucks by viewModel.dataState.collectAsStateWithLifecycle()
+    val uiState by viewModel.foodTruckUserUiState.collectAsStateWithLifecycle()
 
-    Log.d("TrucksListScreen", "Data list ===> $trucks")
+    when (uiState) {
+        is ResultWrapper.Success -> {
+            Column(modifier = Modifier.fillMaxSize()) {
+                TruckList(trucks = trucks)
+            }
+        }
 
-    Column(modifier = Modifier.fillMaxSize()) {
-        TruckList(trucks = trucks)
+        is ResultWrapper.Error -> {
+            Text(text = "Error fetching data")
+        }
+
+        is ResultWrapper.Loading -> {
+            CircularProgressIndicator(modifier = Modifier.fillMaxSize())
+        }
     }
 }
 
@@ -93,6 +106,7 @@ fun TruckItem(truck: Truck) {
             }
 
         }
+        //TODO
         truck.adresse?.let {
             //  Text(text = "Location : ${it.latitude}, ${it.longitude}")
         }

@@ -6,21 +6,17 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.google.firebase.firestore.FirebaseFirestore
+import com.toulousehvl.myfoodtruck.data.ResultWrapper
 import com.toulousehvl.myfoodtruck.data.Truck
 import com.toulousehvl.myfoodtruck.data.UserPosition
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
-sealed interface FoodTruckUserUiState {
-    data class Success(val userPosition: UserPosition) : FoodTruckUserUiState
-    data object Error : FoodTruckUserUiState
-    data object Loading : FoodTruckUserUiState
-}
 
 class MainViewModel : ViewModel() {
     //TODO
-    var foodTruckUserUiState: FoodTruckUserUiState by mutableStateOf(FoodTruckUserUiState.Loading)
-        private set
+    private val _foodTruckUserUiState = MutableStateFlow<ResultWrapper<Truck>>(ResultWrapper.Loading(true))
+    val foodTruckUserUiState: StateFlow<ResultWrapper<Truck>> = _foodTruckUserUiState
 
     // MutableState pour suivre la position de l'utilisateur
     private val _dataState = MutableStateFlow<List<Truck>>(emptyList())
@@ -42,10 +38,15 @@ class MainViewModel : ViewModel() {
                 }
                 _dataState.value = dataList
 
-                Log.d("Firestore", "Data fetched successfully ===> $dataList")
+                if (dataList.isNotEmpty()) {
+                    _foodTruckUserUiState.value = ResultWrapper.Success(dataList.first())
+                } else {
+                    _foodTruckUserUiState.value = ResultWrapper.Error(Exception("No data found"))
+                }
             }
             .addOnFailureListener { exception ->
                 Log.w("Firestore", "Error getting documents: ", exception)
+                _foodTruckUserUiState.value = ResultWrapper.Error(exception)
             }
     }
 
