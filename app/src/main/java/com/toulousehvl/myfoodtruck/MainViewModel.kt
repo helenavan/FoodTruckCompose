@@ -1,32 +1,26 @@
 package com.toulousehvl.myfoodtruck
 
 import android.util.Log
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.google.firebase.firestore.FirebaseFirestore
 import com.toulousehvl.myfoodtruck.data.ResultWrapper
 import com.toulousehvl.myfoodtruck.data.Truck
-import com.toulousehvl.myfoodtruck.data.UserPosition
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
 
 class MainViewModel : ViewModel() {
-    //TODO
+
     private val _foodTruckUserUiState = MutableStateFlow<ResultWrapper<Truck>>(ResultWrapper.Loading(true))
     val foodTruckUserUiState: StateFlow<ResultWrapper<Truck>> = _foodTruckUserUiState
 
-    // MutableState pour suivre la position de l'utilisateur
-    private val _dataState = MutableStateFlow<List<Truck>>(emptyList())
-    val dataState: StateFlow<List<Truck>> = _dataState
+    private val _dataListTrucksState = MutableStateFlow<List<Truck>>(emptyList())
+    val dataListTrucksState: StateFlow<List<Truck>> = _dataListTrucksState
 
     init {
         fetchDataFromFirestore()
     }
 
-    // Fonction pour récupérer des données Firestore
     fun fetchDataFromFirestore() {
         val db = FirebaseFirestore.getInstance()
 
@@ -36,7 +30,7 @@ class MainViewModel : ViewModel() {
                 val dataList = result.documents.mapNotNull { document ->
                     document.toObject(Truck::class.java)?.copy(document.id)
                 }
-                _dataState.value = dataList
+                _dataListTrucksState.value = dataList
 
                 if (dataList.isNotEmpty()) {
                     _foodTruckUserUiState.value = ResultWrapper.Success(dataList.first())
@@ -50,7 +44,6 @@ class MainViewModel : ViewModel() {
             }
     }
 
-    // Fonction pour ajouter des données dans Firestore
     fun addDataToFirestore(data: String) {
         val db = FirebaseFirestore.getInstance()
 

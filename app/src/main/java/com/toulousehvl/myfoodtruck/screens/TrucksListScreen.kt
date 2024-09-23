@@ -1,6 +1,5 @@
 package com.toulousehvl.myfoodtruck.screens
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -37,7 +36,7 @@ import com.toulousehvl.myfoodtruck.data.Truck
 @Composable
 fun TrucksListScreen(viewModel: MainViewModel = viewModel()) {
 
-    val trucks by viewModel.dataState.collectAsStateWithLifecycle()
+    val trucks by viewModel.dataListTrucksState.collectAsStateWithLifecycle()
     val uiState by viewModel.foodTruckUserUiState.collectAsStateWithLifecycle()
 
     when (uiState) {
