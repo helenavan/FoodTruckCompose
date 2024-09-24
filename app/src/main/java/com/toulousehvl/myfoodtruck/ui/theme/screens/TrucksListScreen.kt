@@ -1,6 +1,7 @@
-package com.toulousehvl.myfoodtruck.screens
+package com.toulousehvl.myfoodtruck.ui.theme.screens
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -28,10 +29,10 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.toulousehvl.myfoodtruck.MainViewModel
 import com.toulousehvl.myfoodtruck.R
-import com.toulousehvl.myfoodtruck.data.CategoryTruck
-import com.toulousehvl.myfoodtruck.data.CategoryTruck.Companion.toCategoryTruckString
 import com.toulousehvl.myfoodtruck.data.ResultWrapper
-import com.toulousehvl.myfoodtruck.data.Truck
+import com.toulousehvl.myfoodtruck.data.model.CategoryTruck
+import com.toulousehvl.myfoodtruck.data.model.CategoryTruck.Companion.toCategoryTruckString
+import com.toulousehvl.myfoodtruck.data.model.Truck
 
 @Composable
 fun TrucksListScreen(viewModel: MainViewModel = viewModel()) {
@@ -63,17 +64,20 @@ fun TruckList(trucks: List<Truck>) {
         contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
     ) {
         items(items = trucks) { truck ->
-            TruckItem(truck = truck)
+            TruckItem(truck = truck, onItemClick = { selectedTruck ->
+                // Handle item click here
+            })
         }
     }
 }
 
 @Composable
-fun TruckItem(truck: Truck) {
+fun TruckItem(truck: Truck, onItemClick: (Truck) -> Unit) {
     ElevatedCard(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(4.dp),
+            .padding(4.dp)
+            .clickable { onItemClick(truck) },
         colors = CardDefaults.cardColors(containerColor = Color.White),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
@@ -133,7 +137,8 @@ fun TruckItemPreview() {
             "FrittesjjjfhfyrhjfkspsofofvnibviyvhbhiuhiuhiuhFrittesjjjfhfyrhjfkspsofofvnibviyvhbhiuhiuhiuh",
             "Thaï",
             1.0
-        )
+        ),
+        onItemClick = {}
     )
 }
 

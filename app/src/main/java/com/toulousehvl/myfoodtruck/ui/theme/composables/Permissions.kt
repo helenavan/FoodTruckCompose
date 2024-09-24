@@ -1,4 +1,4 @@
-package com.toulousehvl.myfoodtruck.composables
+package com.toulousehvl.myfoodtruck.ui.theme.composables
 
 import android.Manifest
 import android.util.Log

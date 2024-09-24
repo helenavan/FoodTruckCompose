@@ -1,6 +1,6 @@
-package com.toulousehvl.myfoodtruck.service
+package com.toulousehvl.myfoodtruck.data.service
 
-import com.toulousehvl.myfoodtruck.data.Truck
+import com.toulousehvl.myfoodtruck.data.model.Truck
 
 class TruckRepositoryImpl : TruckRepository {
 

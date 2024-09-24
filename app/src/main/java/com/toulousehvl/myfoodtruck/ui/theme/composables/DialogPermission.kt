@@ -1,4 +1,4 @@
-package com.toulousehvl.myfoodtruck.composables
+package com.toulousehvl.myfoodtruck.ui.theme.composables
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

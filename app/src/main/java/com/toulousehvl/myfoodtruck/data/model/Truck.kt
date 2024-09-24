@@ -1,4 +1,4 @@
-package com.toulousehvl.myfoodtruck.data
+package com.toulousehvl.myfoodtruck.data.model
 
 data class Truck(
     var documentId: String? = null,

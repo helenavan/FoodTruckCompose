@@ -1,4 +1,4 @@
-package com.toulousehvl.myfoodtruck.screens
+package com.toulousehvl.myfoodtruck.ui.theme.screens
 
 import androidx.compose.runtime.Composable
 import com.toulousehvl.myfoodtruck.CenterText

@@ -1,4 +1,4 @@
-package com.toulousehvl.myfoodtruck.ui.theme
+package com.toulousehvl.myfoodtruck.ui.theme.theme
 
 import androidx.compose.ui.graphics.Color
 

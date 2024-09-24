@@ -2,7 +2,7 @@ package com.toulousehvl.myfoodtruck
 
 import android.app.Application
 import com.google.firebase.FirebaseApp
-import com.toulousehvl.myfoodtruck.di.AppModule
+import com.toulousehvl.myfoodtruck.data.di.AppModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
 

@@ -1,4 +1,4 @@
-package com.toulousehvl.myfoodtruck.service
+package com.toulousehvl.myfoodtruck.data.service
 
 import android.util.Log
 import org.osmdroid.events.MapEventsReceiver

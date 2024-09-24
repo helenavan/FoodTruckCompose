@@ -39,20 +39,20 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.toulousehvl.myfoodtruck.composables.RequestLocationPermission
-import com.toulousehvl.myfoodtruck.composables.ShowDialogPermission
-import com.toulousehvl.myfoodtruck.composables.PermissionResultTex.onPermissionDenied
-import com.toulousehvl.myfoodtruck.composables.PermissionResultTex.onPermissionGranted
-import com.toulousehvl.myfoodtruck.composables.PermissionResultTex.onPermissionsRevoked
-import com.toulousehvl.myfoodtruck.composables.PermissionResultTex.permissionResultText
-import com.toulousehvl.myfoodtruck.composables.PermissionResultTex.showPermissionResultText
+import com.toulousehvl.myfoodtruck.ui.theme.composables.RequestLocationPermission
+import com.toulousehvl.myfoodtruck.ui.theme.composables.ShowDialogPermission
+import com.toulousehvl.myfoodtruck.ui.theme.composables.PermissionResultTex.onPermissionDenied
+import com.toulousehvl.myfoodtruck.ui.theme.composables.PermissionResultTex.onPermissionGranted
+import com.toulousehvl.myfoodtruck.ui.theme.composables.PermissionResultTex.onPermissionsRevoked
+import com.toulousehvl.myfoodtruck.ui.theme.composables.PermissionResultTex.permissionResultText
+import com.toulousehvl.myfoodtruck.ui.theme.composables.PermissionResultTex.showPermissionResultText
 import com.toulousehvl.myfoodtruck.navigation.NavigationItem
-import com.toulousehvl.myfoodtruck.screens.InformationScreen
-import com.toulousehvl.myfoodtruck.screens.MapView
-import com.toulousehvl.myfoodtruck.screens.TrucksListScreen
-import com.toulousehvl.myfoodtruck.ui.theme.MyFoodTruckTheme
-import com.toulousehvl.myfoodtruck.ui.theme.YellowBanane
-import com.toulousehvl.myfoodtruck.ui.theme.YellowLite
+import com.toulousehvl.myfoodtruck.ui.theme.screens.InformationScreen
+import com.toulousehvl.myfoodtruck.ui.theme.screens.MapView
+import com.toulousehvl.myfoodtruck.ui.theme.screens.TrucksListScreen
+import com.toulousehvl.myfoodtruck.ui.theme.theme.MyFoodTruckTheme
+import com.toulousehvl.myfoodtruck.ui.theme.theme.YellowBanane
+import com.toulousehvl.myfoodtruck.ui.theme.theme.YellowLite
 
 class MainActivity : ComponentActivity() {
 
