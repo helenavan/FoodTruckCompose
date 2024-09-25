@@ -1,5 +1,7 @@
 package com.toulousehvl.myfoodtruck.data.model
 
+import java.io.Serializable
+
 data class Truck(
     var documentId: String? = null,
     var nameTruck: String? = null,
@@ -14,7 +16,7 @@ data class Truck(
     var zipCode: String? = null,
     var city:String? = null,
     var country:String? = null
-)
+) : Serializable
 
 sealed class CategoryTruck {
     data object Italian : CategoryTruck()

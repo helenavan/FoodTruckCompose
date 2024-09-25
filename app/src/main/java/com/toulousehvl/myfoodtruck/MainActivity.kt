@@ -1,10 +1,8 @@
 package com.toulousehvl.myfoodtruck
 
-import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -31,7 +29,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -39,20 +36,21 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.toulousehvl.myfoodtruck.ui.theme.composables.RequestLocationPermission
-import com.toulousehvl.myfoodtruck.ui.theme.composables.ShowDialogPermission
+import com.toulousehvl.myfoodtruck.navigation.NavigationItem
 import com.toulousehvl.myfoodtruck.ui.theme.composables.PermissionResultTex.onPermissionDenied
 import com.toulousehvl.myfoodtruck.ui.theme.composables.PermissionResultTex.onPermissionGranted
 import com.toulousehvl.myfoodtruck.ui.theme.composables.PermissionResultTex.onPermissionsRevoked
 import com.toulousehvl.myfoodtruck.ui.theme.composables.PermissionResultTex.permissionResultText
 import com.toulousehvl.myfoodtruck.ui.theme.composables.PermissionResultTex.showPermissionResultText
-import com.toulousehvl.myfoodtruck.navigation.NavigationItem
+import com.toulousehvl.myfoodtruck.ui.theme.composables.RequestLocationPermission
+import com.toulousehvl.myfoodtruck.ui.theme.composables.ShowDialogPermission
 import com.toulousehvl.myfoodtruck.ui.theme.screens.InformationScreen
 import com.toulousehvl.myfoodtruck.ui.theme.screens.MapView
 import com.toulousehvl.myfoodtruck.ui.theme.screens.TrucksListScreen
 import com.toulousehvl.myfoodtruck.ui.theme.theme.MyFoodTruckTheme
 import com.toulousehvl.myfoodtruck.ui.theme.theme.YellowBanane
 import com.toulousehvl.myfoodtruck.ui.theme.theme.YellowLite
+import org.koin.androidx.compose.koinViewModel
 
 class MainActivity : ComponentActivity() {
 
@@ -60,7 +58,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
+        //  enableEdgeToEdge()
         setContent {
             val navController = rememberNavController()
             MyFoodTruckTheme {
@@ -84,8 +82,7 @@ class MainActivity : ComponentActivity() {
                         showPermissionResultText,
                         permissionResultText
                     )
-
-                    MainScreen(navController = navController, viewModel = viewModel)
+                    MainScreen(navController = navController)
                 }
             }
         }
@@ -94,8 +91,7 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun MainScreen(
-    navController: NavHostController,
-    viewModel: MainViewModel
+    navController: NavHostController
 ) {
     Scaffold(
         bottomBar = {
@@ -115,7 +111,7 @@ fun MainScreen(
                     )
                 )
         ) {
-            Navigations(navController = navController, viewModel)
+            Navigations(navController)
         }
     }
 }
@@ -123,12 +119,12 @@ fun MainScreen(
 @Composable
 fun BottomNavigationBar(navController: NavController) {
     val items = listOf(
-        NavigationItem.Home,
-        NavigationItem.History,
-        NavigationItem.Profile,
+        NavigationItem.Map,
+        NavigationItem.ListTrucks,
+        NavigationItem.Infos,
     )
     var selectedItem by remember { mutableIntStateOf(0) }
-    var currentRoute by remember { mutableStateOf(NavigationItem.Home.route) }
+    var currentRoute by remember { mutableStateOf(NavigationItem.Map.route) }
 
     items.forEachIndexed { index, navigationItem ->
         if (navigationItem.route == currentRoute) {
@@ -168,15 +164,20 @@ fun BottomNavigationBar(navController: NavController) {
 }
 
 @Composable
-fun Navigations(navController: NavHostController, viewModel: MainViewModel) {
-    NavHost(navController, startDestination = NavigationItem.Home.route) {
-        composable(NavigationItem.Home.route) {
+fun Navigations(navController: NavHostController) {
+    val viewModel = koinViewModel<MainViewModel>()
+
+    NavHost(navController, startDestination = NavigationItem.Map.route) {
+
+        composable(NavigationItem.Map.route) {
             MapView(viewModel)
         }
-        composable(NavigationItem.History.route) {
-            TrucksListScreen()
+
+        composable(NavigationItem.ListTrucks.route) {
+            TrucksListScreen(navController = navController, viewModel)
         }
-        composable(NavigationItem.Profile.route) {
+
+        composable(NavigationItem.Infos.route) {
             InformationScreen()
         }
     }
@@ -190,18 +191,5 @@ fun CenterText(text: String) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(text = text, fontSize = 32.sp)
-    }
-}
-
-@Preview(
-    showBackground = true,
-    uiMode = UI_MODE_NIGHT_YES,
-    name = "GreetingPreviewDark"
-)
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    MyFoodTruckTheme {
-      //  MainScreen(navController = rememberNavController())
     }
 }

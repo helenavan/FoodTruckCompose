@@ -7,7 +7,7 @@ import androidx.compose.material.icons.rounded.Map
 import androidx.compose.ui.graphics.vector.ImageVector
 
 sealed class NavigationItem(var route: String, val icon: ImageVector?, var title: String) {
-    data object Home : NavigationItem("Home", Icons.Rounded.Map, "Home")
-    data object History : NavigationItem("Liste", Icons.Rounded.List, "Liste")
-    data object Profile : NavigationItem("Profile", Icons.Rounded.Info, "Profile")
+    data object Map : NavigationItem("Map", Icons.Rounded.Map, "Map")
+    data object ListTrucks : NavigationItem("Liste", Icons.Rounded.List, "Liste")
+    data object Infos : NavigationItem("Info", Icons.Rounded.Info, "Info")
 }

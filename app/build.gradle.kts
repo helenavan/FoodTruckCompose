@@ -81,6 +81,7 @@ dependencies {
     implementation(libs.ui)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.play.services.location)
+    implementation(libs.moshi.kotlin)
     
     //Permissions
     implementation(libs.accompanist.permissions)
@@ -93,6 +94,7 @@ dependencies {
     // Koin
     implementation(libs.kotlinx.serialization.json)
     implementation("io.insert-koin:koin-core:$koinVersion")
+    implementation(libs.koin.androidx.compose)
 
     // Koin for Android
     implementation(libs.insert.koin.koin.android)

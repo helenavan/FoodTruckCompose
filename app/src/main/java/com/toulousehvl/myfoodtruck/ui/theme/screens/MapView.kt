@@ -1,6 +1,7 @@
 package com.toulousehvl.myfoodtruck.ui.theme.screens
 
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -18,40 +19,34 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.toulousehvl.myfoodtruck.MainViewModel
 import com.toulousehvl.myfoodtruck.ui.theme.composables.rememberMapViewWithLifecycle
-import com.toulousehvl.myfoodtruck.data.service.MyMapEventsReceiver
 import com.toulousehvl.myfoodtruck.ui.theme.theme.YellowBanane
 import org.osmdroid.config.Configuration
 import org.osmdroid.library.BuildConfig
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.GeoPoint
-import org.osmdroid.views.overlay.MapEventsOverlay
 import org.osmdroid.views.overlay.Marker
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay
 
 @Composable
-fun MapView(
-    viewModel: MainViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
-) {
+fun MapView(viewModel: MainViewModel) {
     var mLocationOverlay: MyLocationNewOverlay? = null
     val mapView = rememberMapViewWithLifecycle()
     // État pour stocker le GeoPoint sélectionné
     var selectedGeoPoint by remember { mutableStateOf<GeoPoint?>(null) }
-
-    // Créer une instance du MapEventsOverlay avec notre receveur personnalisé
-    val mapEventsReceiver = MyMapEventsReceiver { geoPoint ->
-        // Mettre à jour l'état avec le GeoPoint sélectionné
-        selectedGeoPoint = geoPoint
-    }
+    val selectedTruck by viewModel.selectedTruckState.collectAsStateWithLifecycle()
 
     Box(modifier = Modifier.fillMaxSize()) {
+        Log.d(("MapView"), "selectedTruck ===> $selectedTruck")
+
         Configuration.getInstance().userAgentValue = BuildConfig.LIBRARY_PACKAGE_NAME
         // val uiState by viewModel.userLocation.collectAsStateWithLifecycle()
 
         AndroidView({ mapView }) { view ->
-            // onLoad?.invoke(view)
+            //  onLoad?.invoke(view)
 
             view.setTileSource(TileSourceFactory.MAPNIK)
             view.setMultiTouchControls(true)
@@ -73,9 +68,9 @@ fun MapView(
             mapController.animateTo(startPoint, 16.5, 5)
             view.overlays.add(mLocationOverlay)
 
-            // Ajouter l'overlay pour capturer les événements de la carte
-            val mapEventsOverlay = MapEventsOverlay(mapEventsReceiver)
-            mapView.overlays.add(mapEventsOverlay)
+//            // Ajouter l'overlay pour capturer les événements de la carte
+//            val mapEventsOverlay = MapEventsOverlay(mapEventsReceiver)
+//            mapView.overlays.add(mapEventsOverlay)
 
             // Créer et ajouter le marqueur pour afficher les infos
             val marker = Marker(mapView)
@@ -83,19 +78,18 @@ fun MapView(
             mapView.overlays.add(marker)
 
             // Mettre à jour le contenu du marqueur lorsque l'utilisateur sélectionne un GeoPoint
-            selectedGeoPoint?.let {
-                marker.position = it
-                marker.snippet = "Latitude: ${it.latitude}, Longitude: ${it.longitude}"
-                marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
-                marker.showInfoWindow()
-            }
-            Log.d("MapView", "Map click events ===> $selectedGeoPoint")
+//            selectedGeoPoint?.let {
+//                marker.position = it
+//                marker.snippet = "Latitude: ${it.latitude}, Longitude: ${it.longitude}"
+//                marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
+//                marker.showInfoWindow()
+//            }
 
             // Handle marker click events
-//       marker.setOnMarkerClickListener { _, _ ->
-//           Toast.makeText(view.context, "Marker clicked!", Toast.LENGTH_SHORT).show()
-//           true
-//       }
+            marker.setOnMarkerClickListener { _, _ ->
+                Toast.makeText(view.context, "Marker clicked!", Toast.LENGTH_SHORT).show()
+                true
+            }
 
             // Refresh the map
             view.invalidate()

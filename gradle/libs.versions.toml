@@ -19,17 +19,18 @@ junitVersion = "1.2.1"
 espressoCore = "3.6.1"
 gradle-versions = "0.51.0"
 kotlinxSerializationJson = "1.7.1"
-lifecycleRuntimeKtx = "2.8.5"
+lifecycleRuntimeKtx = "2.8.6"
 activityCompose = "1.9.2"
-composeBom = "2024.09.01"
-materialIconsExtended = "1.7.1"
-navigationCompose = "2.8.0"
+composeBom = "2024.09.02"
+materialIconsExtended = "1.7.2"
+moshiKotlin = "1.15.1"
+navigationCompose = "2.8.1"
 osmdroidVersion = "6.1.18"
 playServicesLocation = "21.3.0"
-runtimeLivedata = "1.7.1"
-ui = "1.7.1"
-uiTooling = "1.7.1"
-uiToolingPreview = "1.7.1"
+runtimeLivedata = "1.7.2"
+ui = "1.7.2"
+uiTooling = "1.7.2"
+uiToolingPreview = "1.7.2"
 googleGmsGoogleServices = "4.4.2"
 firebaseConfig = "22.0.0"
 firebaseFirestore = "25.1.0"
@@ -74,6 +75,7 @@ koin-androidx-viewmodel-x_koinversion_z = { module = "io.insert-koin.koin-androi
 koin-androidx-workmanager = { module = "io.insert-koin:koin-androidx-workmanager", version.ref = "koinAndroidVersion" }
 koin-core = { module = "org.koin:koin-core", version.ref = "koinCore" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
+moshi-kotlin = { module = "com.squareup.moshi:moshi-kotlin", version.ref = "moshiKotlin" }
 osmdroid-android = { module = "org.osmdroid:osmdroid-android", version.ref = "osmdroidVersion" }
 play-services-location = { module = "com.google.android.gms:play-services-location", version.ref = "playServicesLocation" }
 ui = { module = "androidx.compose.ui:ui", version.ref = "ui" }

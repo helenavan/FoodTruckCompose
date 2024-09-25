@@ -17,6 +17,9 @@ class MainViewModel : ViewModel() {
     private val _dataListTrucksState = MutableStateFlow<List<Truck>>(emptyList())
     val dataListTrucksState: StateFlow<List<Truck>> = _dataListTrucksState
 
+    private val _selectedTruckState = MutableStateFlow<Truck?>(null)
+    val selectedTruckState: StateFlow<Truck?> = _selectedTruckState
+
     init {
         fetchDataFromFirestore()
     }
@@ -55,10 +58,16 @@ class MainViewModel : ViewModel() {
             .add(newData)
             .addOnSuccessListener {
                 Log.d("Firestore", "DocumentSnapshot added with ID: ${it.id}")
-                fetchDataFromFirestore() // Optionnel, mettre à jour les données
+                fetchDataFromFirestore()
             }
             .addOnFailureListener { e ->
                 Log.w("Firestore", "Error adding document", e)
             }
+    }
+
+    fun updateSelectedTruck(truck: Truck) {
+        _selectedTruckState.value = truck
+
+        Log.d("MainViewModel", "updateSelectedTruck ===> $truck")
     }
 }

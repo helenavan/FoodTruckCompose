@@ -1,5 +1,6 @@
 package com.toulousehvl.myfoodtruck.ui.theme.screens
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -19,6 +20,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -27,26 +29,27 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import com.toulousehvl.myfoodtruck.MainViewModel
 import com.toulousehvl.myfoodtruck.R
 import com.toulousehvl.myfoodtruck.data.ResultWrapper
 import com.toulousehvl.myfoodtruck.data.model.CategoryTruck
 import com.toulousehvl.myfoodtruck.data.model.CategoryTruck.Companion.toCategoryTruckString
 import com.toulousehvl.myfoodtruck.data.model.Truck
+import com.toulousehvl.myfoodtruck.navigation.NavigationItem
 
 @Composable
-fun TrucksListScreen(viewModel: MainViewModel = viewModel()) {
-
+fun TrucksListScreen(navController: NavController, viewModel: MainViewModel) {
+    // val viewModel: MainViewModel = koinViewModel()
     val trucks by viewModel.dataListTrucksState.collectAsStateWithLifecycle()
     val uiState by viewModel.foodTruckUserUiState.collectAsStateWithLifecycle()
 
     when (uiState) {
         is ResultWrapper.Success -> {
             Column(modifier = Modifier.fillMaxSize()) {
-                TruckList(trucks = trucks)
+                TruckList(trucks = trucks, navController = navController)
             }
         }
-
         is ResultWrapper.Error -> {
             Text(text = "Error fetching data")
         }
@@ -58,14 +61,20 @@ fun TrucksListScreen(viewModel: MainViewModel = viewModel()) {
 }
 
 @Composable
-fun TruckList(trucks: List<Truck>) {
+fun TruckList(
+    trucks: List<Truck>,
+    navController: NavController,
+    viewModel: MainViewModel = viewModel()
+) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
     ) {
         items(items = trucks) { truck ->
             TruckItem(truck = truck, onItemClick = { selectedTruck ->
-                // Handle item click here
+                viewModel.updateSelectedTruck(selectedTruck)
+                navController.navigate(NavigationItem.Map.route)
+                Log.d("TruckList", "selectedTruck ===> $selectedTruck")
             })
         }
     }
@@ -109,10 +118,6 @@ fun TruckItem(truck: Truck, onItemClick: (Truck) -> Unit) {
             }
 
         }
-        //TODO
-        truck.adresse?.let {
-            //  Text(text = "Location : ${it.latitude}, ${it.longitude}")
-        }
     }
 }
 
@@ -146,6 +151,7 @@ fun TruckItemPreview() {
 @Composable
 fun TruckListPreview() {
     TruckList(
+        navController = NavController(LocalContext.current),
         trucks = listOf(
             Truck(),
             Truck(),
