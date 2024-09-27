@@ -5,13 +5,8 @@ agp = "8.5.0"
 appcompat = "1.7.0"
 constraintlayout = "2.2.0-beta01"
 constraintlayoutCompose = "1.1.0-beta01"
-koinAndroid = "3.3.3"
-koinAndroidCompat = "3.3.3"
-koinAndroidVersion = "3.5.6"
-koinAndroidxExt = "3.3.3"
-koinAndroidxScope = "3.3.3"
-koinAndroidxViewmodel = "3.3.3"
-koinCore = "3.3.3"
+hiltAndroid = "2.52"
+hiltWork = "1.2.0"
 kotlin = "2.0.20"
 coreKtx = "1.13.1"
 junit = "4.13.2"
@@ -24,6 +19,7 @@ activityCompose = "1.9.2"
 composeBom = "2024.09.02"
 materialIconsExtended = "1.7.2"
 moshiKotlin = "1.15.1"
+multidex = "2.0.1"
 navigationCompose = "2.8.1"
 osmdroidVersion = "6.1.18"
 playServicesLocation = "21.3.0"
@@ -42,14 +38,20 @@ androidx-appcompat = { module = "androidx.appcompat:appcompat", version.ref = "a
 androidx-constraintlayout = { module = "androidx.constraintlayout:constraintlayout", version.ref = "constraintlayout" }
 androidx-constraintlayout-compose = { module = "androidx.constraintlayout:constraintlayout-compose", version.ref = "constraintlayoutCompose" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hiltWork" }
+androidx-hilt-navigation-fragment = { module = "androidx.hilt:hilt-navigation-fragment", version.ref = "hiltWork" }
+androidx-hilt-work = { module = "androidx.hilt:hilt-work", version.ref = "hiltWork" }
 androidx-lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycleRuntimeKtx" }
 androidx-material = { module = "androidx.compose.material:material", version.ref = "materialIconsExtended" }
 androidx-material-icons-extended = { module = "androidx.compose.material:material-icons-extended", version.ref = "materialIconsExtended" }
+androidx-multidex = { module = "androidx.multidex:multidex", version.ref = "multidex" }
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
+androidx-navigation-dynamic-features-fragment = { module = "androidx.navigation:navigation-dynamic-features-fragment", version.ref = "navigationCompose" }
+androidx-navigation-fragment-ktx = { module = "androidx.navigation:navigation-fragment-ktx", version.ref = "navigationCompose" }
+androidx-navigation-ui-ktx = { module = "androidx.navigation:navigation-ui-ktx", version.ref = "navigationCompose" }
 androidx-runtime-livedata = { module = "androidx.compose.runtime:runtime-livedata", version.ref = "runtimeLivedata" }
-insert-koin-koin-android = { module = "io.insert-koin:koin-android", version.ref = "koinAndroidVersion" }
-insert-koin-koin-androidx-scope = { module = "io.insert-koin:koin-androidx-scope", version.ref = "koinAndroidVersion" }
-insert-koin-koin-androidx-viewmodel = { module = "io.insert-koin:koin-androidx-viewmodel", version.ref = "koinAndroidVersion" }
+hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hiltAndroid" }
+hilt-android-compiler = { group = "com.google.dagger", name = "hilt-android-compiler", version.ref = "hiltAndroid" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
@@ -63,17 +65,6 @@ androidx-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-toolin
 androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
 androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
-koin-android = { module = "org.koin:koin-android", version.ref = "koinAndroid" }
-koin-android-compat = { module = "org.koin:koin-android-compat", version.ref = "koinAndroidCompat" }
-koin-androidx-compose = { module = "io.insert-koin:koin-androidx-compose", version.ref = "koinAndroidVersion" }
-koin-androidx-compose-navigation = { module = "io.insert-koin:koin-androidx-compose-navigation", version.ref = "koinAndroidVersion" }
-koin-androidx-ext = { module = "org.koin:koin-androidx-ext", version.ref = "koinAndroidxExt" }
-koin-androidx-fragment = { module = "io.insert-koin:koin-androidx-fragment", version.ref = "koinAndroidVersion" }
-koin-androidx-scope = { module = "org.koin:koin-androidx-scope", version.ref = "koinAndroidxScope" }
-koin-androidx-viewmodel = { module = "org.koin:koin-androidx-viewmodel", version.ref = "koinAndroidxViewmodel" }
-koin-androidx-viewmodel-x_koinversion_z = { module = "io.insert-koin.koin-androidx-viewmodel:${koinVersion}" }
-koin-androidx-workmanager = { module = "io.insert-koin:koin-androidx-workmanager", version.ref = "koinAndroidVersion" }
-koin-core = { module = "org.koin:koin-core", version.ref = "koinCore" }
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
 moshi-kotlin = { module = "com.squareup.moshi:moshi-kotlin", version.ref = "moshiKotlin" }
 osmdroid-android = { module = "org.osmdroid:osmdroid-android", version.ref = "osmdroidVersion" }
@@ -91,4 +82,6 @@ compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 gradle-versions = { id = "com.github.ben-manes.versions", version.ref = "gradle-versions" }
 google-gms-google-services = { id = "com.google.gms.google-services", version.ref = "googleGmsGoogleServices" }
+dagger = { id = "com.google.dagger.hilt.android", version.ref = "hiltAndroid"}
+serialization = { id = "org.jetbrains.kotlin", version.ref = "kotlinxSerializationJson"}
 

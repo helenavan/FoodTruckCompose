@@ -3,6 +3,8 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.compose)
     alias(libs.plugins.google.gms.google.services)
+    alias(libs.plugins.dagger)
+    kotlin("kapt")
 }
 
 android {
@@ -20,6 +22,8 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+
+        multiDexEnabled = true
     }
 
     buildTypes {
@@ -57,6 +61,7 @@ android {
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
+            excludes += "/META-INF/gradle/incremental.annotation.processors"
         }
     }
 }
@@ -65,7 +70,6 @@ dependencies {
     implementation(libs.firebase.config)
     implementation(libs.firebase.firestore)
     val osmdroidVersion by extra( "6.1.18")
-    val koinVersion  by extra("3.5.6")
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
@@ -79,28 +83,31 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.androidx.runtime.livedata)
     implementation(libs.ui)
-    implementation(libs.androidx.navigation.compose)
     implementation(libs.play.services.location)
     implementation(libs.moshi.kotlin)
+    implementation(libs.androidx.multidex)
+
+    //Navigation
+    implementation(libs.androidx.navigation.compose)
     
     //Permissions
     implementation(libs.accompanist.permissions)
 
-    //preview
+    //Preview
     debugImplementation (libs.ui.tooling)
     implementation (libs.ui.tooling.preview)
     implementation (libs.androidx.appcompat)
 
-    // Koin
+    //Serializable
     implementation(libs.kotlinx.serialization.json)
-    implementation("io.insert-koin:koin-core:$koinVersion")
-    implementation(libs.koin.androidx.compose)
 
-    // Koin for Android
-    implementation(libs.insert.koin.koin.android)
+    //Hilt
+    implementation(libs.hilt.android)
+    implementation(libs.hilt.android.compiler)
+    implementation(libs.androidx.hilt.navigation.fragment)
+    implementation(libs.androidx.hilt.navigation.compose)
+    kapt(libs.hilt.android.compiler)
 
-    // Koin AndroidX WorkManager
-    implementation(libs.koin.androidx.workmanager)
 
     //Map
     implementation(libs.osmdroid.android)

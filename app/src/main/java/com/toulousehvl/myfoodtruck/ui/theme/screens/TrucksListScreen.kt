@@ -27,6 +27,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
@@ -39,8 +40,8 @@ import com.toulousehvl.myfoodtruck.data.model.Truck
 import com.toulousehvl.myfoodtruck.navigation.NavigationItem
 
 @Composable
-fun TrucksListScreen(navController: NavController, viewModel: MainViewModel) {
-    // val viewModel: MainViewModel = koinViewModel()
+fun TrucksListScreen(navController: NavController) {
+     val viewModel: MainViewModel = hiltViewModel()
     val trucks by viewModel.dataListTrucksState.collectAsStateWithLifecycle()
     val uiState by viewModel.foodTruckUserUiState.collectAsStateWithLifecycle()
 
@@ -72,8 +73,8 @@ fun TruckList(
     ) {
         items(items = trucks) { truck ->
             TruckItem(truck = truck, onItemClick = { selectedTruck ->
-                viewModel.updateSelectedTruck(selectedTruck)
-                navController.navigate(NavigationItem.Map.route)
+                navController.navigate(NavigationItem.Map.route.plus("/${selectedTruck}").replace("{documentId}", "$selectedTruck"))
+              //  viewModel.updateSelectedTruck(selectedTruck)
                 Log.d("TruckList", "selectedTruck ===> $selectedTruck")
             })
         }

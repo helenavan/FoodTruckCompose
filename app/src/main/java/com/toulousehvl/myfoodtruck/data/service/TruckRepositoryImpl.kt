@@ -1,8 +1,9 @@
 package com.toulousehvl.myfoodtruck.data.service
 
 import com.toulousehvl.myfoodtruck.data.model.Truck
+import javax.inject.Inject
 
-class TruckRepositoryImpl : TruckRepository {
+class TruckRepositoryImpl @Inject constructor(private val truckService: TruckService) : TruckRepository {
 
     private val _trucks = arrayListOf<Truck>()
 

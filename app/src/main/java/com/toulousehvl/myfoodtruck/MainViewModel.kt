@@ -1,15 +1,22 @@
 package com.toulousehvl.myfoodtruck
 
 import android.util.Log
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import com.google.firebase.firestore.FirebaseFirestore
 import com.toulousehvl.myfoodtruck.data.ResultWrapper
 import com.toulousehvl.myfoodtruck.data.model.Truck
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import javax.inject.Inject
 
-
-class MainViewModel : ViewModel() {
+@HiltViewModel
+class MainViewModel @Inject constructor(
+    private val savedStateHandle: SavedStateHandle
+) : ViewModel() {
 
     private val _foodTruckUserUiState = MutableStateFlow<ResultWrapper<Truck>>(ResultWrapper.Loading(true))
     val foodTruckUserUiState: StateFlow<ResultWrapper<Truck>> = _foodTruckUserUiState
@@ -17,8 +24,8 @@ class MainViewModel : ViewModel() {
     private val _dataListTrucksState = MutableStateFlow<List<Truck>>(emptyList())
     val dataListTrucksState: StateFlow<List<Truck>> = _dataListTrucksState
 
-    private val _selectedTruckState = MutableStateFlow<Truck?>(null)
-    val selectedTruckState: StateFlow<Truck?> = _selectedTruckState
+    val selectedTruckState: MutableState<Truck?> = mutableStateOf(savedStateHandle["selectedTruck"])
+
 
     init {
         fetchDataFromFirestore()
@@ -66,8 +73,8 @@ class MainViewModel : ViewModel() {
     }
 
     fun updateSelectedTruck(truck: Truck) {
-        _selectedTruckState.value = truck
-
-        Log.d("MainViewModel", "updateSelectedTruck ===> $truck")
+        selectedTruckState.value = truck
+        savedStateHandle["selectedTruck"] = truck
+        Log.d("MainViewModel", "updateSelectedTruck ===> ${selectedTruckState.value}")
     }
 }

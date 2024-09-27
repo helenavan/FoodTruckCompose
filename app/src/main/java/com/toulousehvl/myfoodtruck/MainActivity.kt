@@ -1,6 +1,7 @@
 package com.toulousehvl.myfoodtruck
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -33,9 +34,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.toulousehvl.myfoodtruck.navigation.NavigationItem
 import com.toulousehvl.myfoodtruck.ui.theme.composables.PermissionResultTex.onPermissionDenied
 import com.toulousehvl.myfoodtruck.ui.theme.composables.PermissionResultTex.onPermissionGranted
@@ -50,16 +53,20 @@ import com.toulousehvl.myfoodtruck.ui.theme.screens.TrucksListScreen
 import com.toulousehvl.myfoodtruck.ui.theme.theme.MyFoodTruckTheme
 import com.toulousehvl.myfoodtruck.ui.theme.theme.YellowBanane
 import com.toulousehvl.myfoodtruck.ui.theme.theme.YellowLite
-import org.koin.androidx.compose.koinViewModel
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-    private val viewModel: MainViewModel by viewModels<MainViewModel>()
+    private val viewModel: MainViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         //  enableEdgeToEdge()
         setContent {
+
+            Log.d("MainActivity", "onCreate ===> ${viewModel.selectedTruckState.value?.nameTruck}")
+
             val navController = rememberNavController()
             MyFoodTruckTheme {
                 Surface(
@@ -82,7 +89,7 @@ class MainActivity : ComponentActivity() {
                         showPermissionResultText,
                         permissionResultText
                     )
-                    MainScreen(navController = navController)
+                    MainScreen(navController = navController, viewModel = viewModel)
                 }
             }
         }
@@ -91,7 +98,8 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun MainScreen(
-    navController: NavHostController
+    navController: NavHostController,
+    viewModel: MainViewModel
 ) {
     Scaffold(
         bottomBar = {
@@ -111,7 +119,7 @@ fun MainScreen(
                     )
                 )
         ) {
-            Navigations(navController)
+            Navigations(navController, viewModel = viewModel)
         }
     }
 }
@@ -159,22 +167,34 @@ fun BottomNavigationBar(navController: NavController) {
                     }
                 }
             )
+
+            Log.d("BottomNavigationBar", "selectedItem ===> $selectedItem + currentRoute ===> $currentRoute")
         }
     }
 }
 
 @Composable
-fun Navigations(navController: NavHostController) {
-    val viewModel = koinViewModel<MainViewModel>()
+fun Navigations(navController: NavHostController, viewModel: MainViewModel) {
+
+    Log.d("Navigations", "selectedTruckState ===> ${viewModel.selectedTruckState.value}")
 
     NavHost(navController, startDestination = NavigationItem.Map.route) {
 
+        composable(
+            NavigationItem.Map.route.plus("/{documentId}"),
+            arguments = listOf(navArgument("documentId") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val truckId = backStackEntry.arguments?.getString("documentId")
+            Log.d("Navigations", "documentId ===> $truckId")
+            MapView(truckId = truckId, viewModel = viewModel, navController)
+        }
+
         composable(NavigationItem.Map.route) {
-            MapView(viewModel)
+            MapView("", viewModel = viewModel, navController)
         }
 
         composable(NavigationItem.ListTrucks.route) {
-            TrucksListScreen(navController = navController, viewModel)
+            TrucksListScreen(navController = navController)
         }
 
         composable(NavigationItem.Infos.route) {

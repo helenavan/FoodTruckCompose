@@ -1,14 +1,12 @@
 package com.toulousehvl.myfoodtruck.data.di
 
-import com.toulousehvl.myfoodtruck.MainViewModel
-import com.toulousehvl.myfoodtruck.data.service.TruckRepository
-import com.toulousehvl.myfoodtruck.data.service.TruckRepositoryImpl
-import org.koin.androidx.viewmodel.dsl.viewModelOf
-import org.koin.dsl.module
+import dagger.Module
+import dagger.hilt.InstallIn
+import dagger.hilt.components.SingletonComponent
 
+@Module
+@InstallIn(SingletonComponent::class)
 object AppModule {
-    val appModule = module {
-        single<TruckRepository> { TruckRepositoryImpl() }
-        viewModelOf(::MainViewModel)
-    }
+    //TODO("Add dependencies here")
+
 }

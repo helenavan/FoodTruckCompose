@@ -11,15 +11,13 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
 import com.toulousehvl.myfoodtruck.MainViewModel
 import com.toulousehvl.myfoodtruck.ui.theme.composables.rememberMapViewWithLifecycle
 import com.toulousehvl.myfoodtruck.ui.theme.theme.YellowBanane
@@ -32,21 +30,18 @@ import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay
 
 @Composable
-fun MapView(viewModel: MainViewModel) {
+fun MapView(truckId: String? = "null", viewModel: MainViewModel = hiltViewModel(), navHostController: NavHostController) {
+    val selectedTruck by viewModel.selectedTruckState
+
     var mLocationOverlay: MyLocationNewOverlay? = null
     val mapView = rememberMapViewWithLifecycle()
-    // État pour stocker le GeoPoint sélectionné
-    var selectedGeoPoint by remember { mutableStateOf<GeoPoint?>(null) }
-    val selectedTruck by viewModel.selectedTruckState.collectAsStateWithLifecycle()
 
     Box(modifier = Modifier.fillMaxSize()) {
-        Log.d(("MapView"), "selectedTruck ===> $selectedTruck")
+        Log.d(("MapView"), "truckId ===> $truckId")
 
         Configuration.getInstance().userAgentValue = BuildConfig.LIBRARY_PACKAGE_NAME
-        // val uiState by viewModel.userLocation.collectAsStateWithLifecycle()
 
         AndroidView({ mapView }) { view ->
-            //  onLoad?.invoke(view)
 
             view.setTileSource(TileSourceFactory.MAPNIK)
             view.setMultiTouchControls(true)
@@ -68,11 +63,6 @@ fun MapView(viewModel: MainViewModel) {
             mapController.animateTo(startPoint, 16.5, 5)
             view.overlays.add(mLocationOverlay)
 
-//            // Ajouter l'overlay pour capturer les événements de la carte
-//            val mapEventsOverlay = MapEventsOverlay(mapEventsReceiver)
-//            mapView.overlays.add(mapEventsOverlay)
-
-            // Créer et ajouter le marqueur pour afficher les infos
             val marker = Marker(mapView)
             marker.title = "Info Marker"
             mapView.overlays.add(marker)
