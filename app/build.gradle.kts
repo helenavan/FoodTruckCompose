@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.google.gms.google.services)
     alias(libs.plugins.dagger)
     kotlin("kapt")
+    kotlin("plugin.serialization")
 }
 
 android {
@@ -99,7 +100,7 @@ dependencies {
     implementation (libs.androidx.appcompat)
 
     //Serializable
-    implementation(libs.kotlinx.serialization.json)
+    implementation(libs.kotlinx.serialization.json.v160)
 
     //Hilt
     implementation(libs.hilt.android)

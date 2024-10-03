@@ -25,13 +25,16 @@ class MainViewModel @Inject constructor(
     val dataListTrucksState: StateFlow<List<Truck>> = _dataListTrucksState
 
     val selectedTruckState: MutableState<Truck?> = mutableStateOf(savedStateHandle["selectedTruck"])
+    val selectedTruck: Truck?
+        get() = selectedTruckState.value
+
 
 
     init {
         fetchDataFromFirestore()
     }
 
-    fun fetchDataFromFirestore() {
+    private fun fetchDataFromFirestore() {
         val db = FirebaseFirestore.getInstance()
 
         db.collection("foodtrucks")

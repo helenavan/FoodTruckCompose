@@ -37,7 +37,7 @@ fun MapView(truckId: String? = "null", viewModel: MainViewModel = hiltViewModel(
     val mapView = rememberMapViewWithLifecycle()
 
     Box(modifier = Modifier.fillMaxSize()) {
-        Log.d(("MapView"), "truckId ===> $truckId")
+        Log.d(("MapView"), "truckId selected ===> $truckId + ${selectedTruck?.nameTruck}")
 
         Configuration.getInstance().userAgentValue = BuildConfig.LIBRARY_PACKAGE_NAME
 

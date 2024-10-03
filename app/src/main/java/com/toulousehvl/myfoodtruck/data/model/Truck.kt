@@ -1,14 +1,16 @@
 package com.toulousehvl.myfoodtruck.data.model
 
-import java.io.Serializable
+import kotlinx.serialization.Serializable
 
+
+@Serializable
 data class Truck(
     var documentId: String? = null,
     var nameTruck: String? = null,
     var categorie: String? = null,
-    var rating:Double? = 0.0,
-    var lgtd: Double? = 0.0,
-    var latd: Double? = 0.0,
+    var rating:Int? = 0,
+    var lgtd: Int? = 0,
+    var latd: Int? = 0,
     var date:Long? = null,
     var adresse:String? = null,
     var num:String? = null,
@@ -16,8 +18,9 @@ data class Truck(
     var zipCode: String? = null,
     var city:String? = null,
     var country:String? = null
-) : Serializable
+)
 
+@Serializable
 sealed class CategoryTruck {
     data object Italian : CategoryTruck()
     data object Burger : CategoryTruck()
@@ -26,6 +29,7 @@ sealed class CategoryTruck {
     data object African : CategoryTruck()
     data object Kebab : CategoryTruck()
 
+    @Serializable
     companion object {
         fun String?.toCategoryTruck(): CategoryTruck? {
             return when (this) {

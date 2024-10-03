@@ -9,6 +9,6 @@ class TruckRepositoryImpl @Inject constructor(private val truckService: TruckSer
 
     override fun findTruck(lat: Double, lon: Double): Truck? {
       //  TODO("Not yet implemented")
-        return _trucks.firstOrNull { it.latd == lat }
+        return _trucks.firstOrNull { it.latd?.toDouble() == lat && it.lgtd?.toDouble() == lat }
     }
 }

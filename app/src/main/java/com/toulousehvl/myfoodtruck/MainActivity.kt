@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.BottomAppBar
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -23,23 +22,20 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
 import androidx.navigation.NavHostController
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.toulousehvl.myfoodtruck.navigation.NavigationItem
+import com.toulousehvl.myfoodtruck.navigation.NavigationItem.Infos
+import com.toulousehvl.myfoodtruck.navigation.NavigationItem.ListTrucks
+import com.toulousehvl.myfoodtruck.navigation.NavigationItem.MapTruck
 import com.toulousehvl.myfoodtruck.ui.theme.composables.PermissionResultTex.onPermissionDenied
 import com.toulousehvl.myfoodtruck.ui.theme.composables.PermissionResultTex.onPermissionGranted
 import com.toulousehvl.myfoodtruck.ui.theme.composables.PermissionResultTex.onPermissionsRevoked
@@ -65,9 +61,8 @@ class MainActivity : ComponentActivity() {
         //  enableEdgeToEdge()
         setContent {
 
-            Log.d("MainActivity", "onCreate ===> ${viewModel.selectedTruckState.value?.nameTruck}")
-
             val navController = rememberNavController()
+
             MyFoodTruckTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
@@ -125,50 +120,47 @@ fun MainScreen(
 }
 
 @Composable
-fun BottomNavigationBar(navController: NavController) {
+fun BottomNavigationBar(
+    navController: NavHostController
+) {
     val items = listOf(
-        NavigationItem.Map,
-        NavigationItem.ListTrucks,
-        NavigationItem.Infos,
+        MapTruck,
+        ListTrucks,
+        Infos,
     )
-    var selectedItem by remember { mutableIntStateOf(0) }
-    var currentRoute by remember { mutableStateOf(NavigationItem.Map.route) }
-
-    items.forEachIndexed { index, navigationItem ->
-        if (navigationItem.route == currentRoute) {
-            selectedItem = index
-        }
-    }
 
     NavigationBar(containerColor = YellowBanane) {
-        items.forEachIndexed { index, item ->
+        val navBackStackEntry by navController.currentBackStackEntryAsState()
+        val currentRoute = navBackStackEntry?.destination?.route
+
+        items.forEach { item ->
             NavigationBarItem(
                 modifier = Modifier.background(color = YellowBanane),
                 alwaysShowLabel = true,
                 icon = {
-                    Icon(item.icon!!, contentDescription = item.title, tint = Color.Black)
+                    //TODO : Set icon
+                    //Icon(item.icon!!, contentDescription = item.title, tint = Color.Black)
                 },
                 label = { Text(item.title, color = Color.Gray) },
-                selected = selectedItem == index,
+                selected = currentRoute == item.route,
                 colors = NavigationBarItemDefaults.colors(
                     indicatorColor = YellowLite
                 ),
                 onClick = {
-                    selectedItem = index
-                    currentRoute = item.route
                     navController.navigate(item.route) {
                         navController.graph.startDestinationRoute?.let { route ->
                             popUpTo(route) {
-                                saveState = true
+                                inclusive = false
+                                saveState = false
                             }
                         }
                         launchSingleTop = true
-                        restoreState = true
+                        restoreState = false
                     }
                 }
             )
 
-            Log.d("BottomNavigationBar", "selectedItem ===> $selectedItem + currentRoute ===> $currentRoute")
+            Log.d("BottomNavigationBar", "currentRoute ===> $currentRoute")
         }
     }
 }
@@ -176,28 +168,22 @@ fun BottomNavigationBar(navController: NavController) {
 @Composable
 fun Navigations(navController: NavHostController, viewModel: MainViewModel) {
 
-    Log.d("Navigations", "selectedTruckState ===> ${viewModel.selectedTruckState.value}")
-
-    NavHost(navController, startDestination = NavigationItem.Map.route) {
+    NavHost(navController, startDestination = MapTruck.route.plus("/{documentId}")) {
 
         composable(
-            NavigationItem.Map.route.plus("/{documentId}"),
-            arguments = listOf(navArgument("documentId") { type = NavType.StringType })
+            MapTruck.route.plus("/{documentId}"),
+            arguments = listOf(navArgument("documentId") { defaultValue = "" })
         ) { backStackEntry ->
             val truckId = backStackEntry.arguments?.getString("documentId")
             Log.d("Navigations", "documentId ===> $truckId")
             MapView(truckId = truckId, viewModel = viewModel, navController)
         }
 
-        composable(NavigationItem.Map.route) {
-            MapView("", viewModel = viewModel, navController)
+        composable(ListTrucks.route) {
+            TrucksListScreen(navController)
         }
 
-        composable(NavigationItem.ListTrucks.route) {
-            TrucksListScreen(navController = navController)
-        }
-
-        composable(NavigationItem.Infos.route) {
+        composable(Infos.route) {
             InformationScreen()
         }
     }

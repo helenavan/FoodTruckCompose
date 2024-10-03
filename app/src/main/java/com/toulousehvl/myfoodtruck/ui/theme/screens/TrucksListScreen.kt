@@ -20,7 +20,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -29,8 +28,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import com.toulousehvl.myfoodtruck.MainViewModel
 import com.toulousehvl.myfoodtruck.R
 import com.toulousehvl.myfoodtruck.data.ResultWrapper
@@ -40,7 +38,7 @@ import com.toulousehvl.myfoodtruck.data.model.Truck
 import com.toulousehvl.myfoodtruck.navigation.NavigationItem
 
 @Composable
-fun TrucksListScreen(navController: NavController) {
+fun TrucksListScreen(navController: NavHostController) {
      val viewModel: MainViewModel = hiltViewModel()
     val trucks by viewModel.dataListTrucksState.collectAsStateWithLifecycle()
     val uiState by viewModel.foodTruckUserUiState.collectAsStateWithLifecycle()
@@ -48,13 +46,12 @@ fun TrucksListScreen(navController: NavController) {
     when (uiState) {
         is ResultWrapper.Success -> {
             Column(modifier = Modifier.fillMaxSize()) {
-                TruckList(trucks = trucks, navController = navController)
+                TruckList(trucks = trucks, navController = navController, viewModel)
             }
         }
         is ResultWrapper.Error -> {
             Text(text = "Error fetching data")
         }
-
         is ResultWrapper.Loading -> {
             CircularProgressIndicator(modifier = Modifier.fillMaxSize())
         }
@@ -64,8 +61,8 @@ fun TrucksListScreen(navController: NavController) {
 @Composable
 fun TruckList(
     trucks: List<Truck>,
-    navController: NavController,
-    viewModel: MainViewModel = viewModel()
+    navController: NavHostController,
+    viewModel: MainViewModel
 ) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
@@ -73,8 +70,10 @@ fun TruckList(
     ) {
         items(items = trucks) { truck ->
             TruckItem(truck = truck, onItemClick = { selectedTruck ->
-                navController.navigate(NavigationItem.Map.route.plus("/${selectedTruck}").replace("{documentId}", "$selectedTruck"))
-              //  viewModel.updateSelectedTruck(selectedTruck)
+                navController.navigate(
+                    NavigationItem.MapTruck.route.plus("/${selectedTruck.documentId}")
+                        .replace("{documentId}", "${selectedTruck.documentId}")
+                )
                 Log.d("TruckList", "selectedTruck ===> $selectedTruck")
             })
         }
@@ -142,28 +141,28 @@ fun TruckItemPreview() {
             "1",
             "FrittesjjjfhfyrhjfkspsofofvnibviyvhbhiuhiuhiuhFrittesjjjfhfyrhjfkspsofofvnibviyvhbhiuhiuhiuh",
             "Thaï",
-            1.0
+            1.0.toInt()
         ),
         onItemClick = {}
     )
 }
 
-@Preview
-@Composable
-fun TruckListPreview() {
-    TruckList(
-        navController = NavController(LocalContext.current),
-        trucks = listOf(
-            Truck(),
-            Truck(),
-            Truck(),
-            Truck(),
-            Truck(),
-            Truck(),
-            Truck(),
-            Truck(),
-            Truck(),
-            Truck()
-        )
-    )
-}
+//@Preview
+//@Composable
+//fun TruckListPreview() {
+//    TruckList(
+//        navController = NavController(LocalContext.current),
+//        trucks = listOf(
+//            Truck(),
+//            Truck(),
+//            Truck(),
+//            Truck(),
+//            Truck(),
+//            Truck(),
+//            Truck(),
+//            Truck(),
+//            Truck(),
+//            Truck()
+//        )
+//    )
+//}
