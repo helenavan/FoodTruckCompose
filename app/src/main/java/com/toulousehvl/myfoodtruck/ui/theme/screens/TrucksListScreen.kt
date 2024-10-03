@@ -71,7 +71,7 @@ fun TruckList(
         items(items = trucks) { truck ->
             TruckItem(truck = truck, onItemClick = { selectedTruck ->
                 navController.navigate(
-                    NavigationItem.MapTruck.route.plus("/${selectedTruck.documentId}")
+                    NavigationItem.MapTruck.route
                         .replace("{documentId}", "${selectedTruck.documentId}")
                 )
                 Log.d("TruckList", "selectedTruck ===> $selectedTruck")

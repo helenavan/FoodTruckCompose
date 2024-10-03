@@ -1,6 +1,8 @@
 package com.toulousehvl.myfoodtruck.navigation
 
+import android.util.Log
 import androidx.compose.foundation.background
+import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
@@ -9,6 +11,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.toulousehvl.myfoodtruck.navigation.NavigationItem.Infos
@@ -36,8 +40,11 @@ fun BottomNavigationBar(
                 modifier = Modifier.background(color = YellowBanane),
                 alwaysShowLabel = true,
                 icon = {
-                    //TODO : Set icon
-                    //Icon(item.icon!!, contentDescription = item.title, tint = Color.Black)
+                    Icon(
+                        painter = painterResource(id = item.icon),
+                        contentDescription = item.title,
+                        tint = Color.Gray
+                    )
                 },
                 label = { Text(item.title, color = Color.Gray) },
                 selected = currentRoute == item.route,
@@ -46,14 +53,13 @@ fun BottomNavigationBar(
                 ),
                 onClick = {
                     navController.navigate(item.route) {
-                        navController.graph.startDestinationRoute?.let { route ->
+                        navController.graph.findStartDestination().id.let { route ->
                             popUpTo(route) {
-                                inclusive = false
-                                saveState = false
+                                saveState = true
                             }
                         }
                         launchSingleTop = true
-                        restoreState = false
+                        restoreState = true
                     }
                 }
             )

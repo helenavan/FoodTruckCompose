@@ -20,15 +20,15 @@ fun TrucksNavGraph(
     navController: NavHostController,
     viewModel: MainViewModel
 ) {
-    NavHost(navController, startDestination = MapTruck.route.plus("/{documentId}")) {
+    NavHost(navController, startDestination = MapTruck.route) {
 
         composable(
-            MapTruck.route.plus("/{documentId}"),
-            arguments = listOf(navArgument("documentId") { defaultValue = "" })
+            MapTruck.route,
+            arguments = listOf(navArgument("documentId") { defaultValue = "1" })
         ) { backStackEntry ->
             val truckId = backStackEntry.arguments?.getString("documentId")
 
-            Log.d("Navigations", "documentId ===> $truckId")
+            Log.d("TrucksNavGraph", "documentId ===> $truckId")
 
             MapView(truckId = truckId, viewModel = viewModel, navController)
         }
