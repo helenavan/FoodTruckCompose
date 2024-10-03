@@ -3,54 +3,43 @@ package com.toulousehvl.myfoodtruck.navigation
 import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.toulousehvl.myfoodtruck.data.model.Truck
+import com.toulousehvl.myfoodtruck.MainViewModel
+import com.toulousehvl.myfoodtruck.navigation.NavigationItem.Infos
+import com.toulousehvl.myfoodtruck.navigation.NavigationItem.ListTrucks
+import com.toulousehvl.myfoodtruck.navigation.NavigationItem.MapTruck
 import com.toulousehvl.myfoodtruck.ui.theme.screens.InformationScreen
 import com.toulousehvl.myfoodtruck.ui.theme.screens.MapView
 import com.toulousehvl.myfoodtruck.ui.theme.screens.TrucksListScreen
 
-//TODO
+
 @Composable
 fun TrucksNavGraph(
-    navController: NavHostController
+    navController: NavHostController,
+    viewModel: MainViewModel
 ) {
-    NavHost(
-        navController = navController,
-        startDestination = NavigationItem.MapTruck.route.plus("/{documentId}")
-    ) {
-//        composable(NavigationItem.MapTruck.route) {
-//            Log.d("TrucksNavGraph", "TrucksNavGraph 0 ===> ${Truck().documentId}")
-//            MapView(onNavigation = {
-//                navController.navigate(NavigationItem.ListTrucks.route)
-//            })
-//        }
+    NavHost(navController, startDestination = MapTruck.route.plus("/{documentId}")) {
 
         composable(
-            NavigationItem.MapTruck.route.plus("/{documentId}"),
-            arguments = listOf(navArgument("documentId") { defaultValue = Truck().documentId })
+            MapTruck.route.plus("/{documentId}"),
+            arguments = listOf(navArgument("documentId") { defaultValue = "" })
         ) { backStackEntry ->
             val truckId = backStackEntry.arguments?.getString("documentId")
+
             Log.d("Navigations", "documentId ===> $truckId")
-            //   MapView()
+
+            MapView(truckId = truckId, viewModel = viewModel, navController)
         }
 
-//        composable<NavigationItem.ListTrucks> {
-//            TrucksListScreen(onNavigationToMap = {
-//                navController.navigate(navController.navigate(NavigationItem.MapTruck.route))
-//                Log.d(
-//                    "TrucksNavGraph",
-//                    "TrucksNavGraph 1===> ${it}"
-//                )
-//            })
-//        }
+        composable(ListTrucks.route) {
+            TrucksListScreen(navController)
+        }
 
-        composable<NavigationItem.Infos> {
+        composable(Infos.route) {
             InformationScreen()
         }
-
     }
 
 }

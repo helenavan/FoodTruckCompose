@@ -1,7 +1,6 @@
 package com.toulousehvl.myfoodtruck
 
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -28,14 +27,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
+import com.toulousehvl.myfoodtruck.navigation.BottomNavigationBar
 import com.toulousehvl.myfoodtruck.navigation.NavigationItem.Infos
 import com.toulousehvl.myfoodtruck.navigation.NavigationItem.ListTrucks
 import com.toulousehvl.myfoodtruck.navigation.NavigationItem.MapTruck
+import com.toulousehvl.myfoodtruck.navigation.TrucksNavGraph
 import com.toulousehvl.myfoodtruck.ui.theme.composables.PermissionResultTex.onPermissionDenied
 import com.toulousehvl.myfoodtruck.ui.theme.composables.PermissionResultTex.onPermissionGranted
 import com.toulousehvl.myfoodtruck.ui.theme.composables.PermissionResultTex.onPermissionsRevoked
@@ -43,9 +41,6 @@ import com.toulousehvl.myfoodtruck.ui.theme.composables.PermissionResultTex.perm
 import com.toulousehvl.myfoodtruck.ui.theme.composables.PermissionResultTex.showPermissionResultText
 import com.toulousehvl.myfoodtruck.ui.theme.composables.RequestLocationPermission
 import com.toulousehvl.myfoodtruck.ui.theme.composables.ShowDialogPermission
-import com.toulousehvl.myfoodtruck.ui.theme.screens.InformationScreen
-import com.toulousehvl.myfoodtruck.ui.theme.screens.MapView
-import com.toulousehvl.myfoodtruck.ui.theme.screens.TrucksListScreen
 import com.toulousehvl.myfoodtruck.ui.theme.theme.MyFoodTruckTheme
 import com.toulousehvl.myfoodtruck.ui.theme.theme.YellowBanane
 import com.toulousehvl.myfoodtruck.ui.theme.theme.YellowLite
@@ -114,77 +109,7 @@ fun MainScreen(
                     )
                 )
         ) {
-            Navigations(navController, viewModel = viewModel)
-        }
-    }
-}
-
-@Composable
-fun BottomNavigationBar(
-    navController: NavHostController
-) {
-    val items = listOf(
-        MapTruck,
-        ListTrucks,
-        Infos,
-    )
-
-    NavigationBar(containerColor = YellowBanane) {
-        val navBackStackEntry by navController.currentBackStackEntryAsState()
-        val currentRoute = navBackStackEntry?.destination?.route
-
-        items.forEach { item ->
-            NavigationBarItem(
-                modifier = Modifier.background(color = YellowBanane),
-                alwaysShowLabel = true,
-                icon = {
-                    //TODO : Set icon
-                    //Icon(item.icon!!, contentDescription = item.title, tint = Color.Black)
-                },
-                label = { Text(item.title, color = Color.Gray) },
-                selected = currentRoute == item.route,
-                colors = NavigationBarItemDefaults.colors(
-                    indicatorColor = YellowLite
-                ),
-                onClick = {
-                    navController.navigate(item.route) {
-                        navController.graph.startDestinationRoute?.let { route ->
-                            popUpTo(route) {
-                                inclusive = false
-                                saveState = false
-                            }
-                        }
-                        launchSingleTop = true
-                        restoreState = false
-                    }
-                }
-            )
-
-            Log.d("BottomNavigationBar", "currentRoute ===> $currentRoute")
-        }
-    }
-}
-
-@Composable
-fun Navigations(navController: NavHostController, viewModel: MainViewModel) {
-
-    NavHost(navController, startDestination = MapTruck.route.plus("/{documentId}")) {
-
-        composable(
-            MapTruck.route.plus("/{documentId}"),
-            arguments = listOf(navArgument("documentId") { defaultValue = "" })
-        ) { backStackEntry ->
-            val truckId = backStackEntry.arguments?.getString("documentId")
-            Log.d("Navigations", "documentId ===> $truckId")
-            MapView(truckId = truckId, viewModel = viewModel, navController)
-        }
-
-        composable(ListTrucks.route) {
-            TrucksListScreen(navController)
-        }
-
-        composable(Infos.route) {
-            InformationScreen()
+            TrucksNavGraph(navController = navController, viewModel = viewModel)
         }
     }
 }

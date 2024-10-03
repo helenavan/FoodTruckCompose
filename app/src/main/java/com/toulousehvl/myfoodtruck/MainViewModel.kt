@@ -29,7 +29,6 @@ class MainViewModel @Inject constructor(
         get() = selectedTruckState.value
 
 
-
     init {
         fetchDataFromFirestore()
     }
