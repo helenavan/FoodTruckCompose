@@ -27,9 +27,6 @@ fun TrucksNavGraph(
             arguments = listOf(navArgument("documentId") { defaultValue = "1" })
         ) { backStackEntry ->
             val truckId = backStackEntry.arguments?.getString("documentId")
-
-            Log.d("TrucksNavGraph", "documentId ===> $truckId")
-
             MapView(truckId = truckId, viewModel = viewModel, navController)
         }
 

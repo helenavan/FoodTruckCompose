@@ -41,7 +41,7 @@ import com.toulousehvl.myfoodtruck.navigation.NavigationItem
 fun TrucksListScreen(navController: NavHostController) {
      val viewModel: MainViewModel = hiltViewModel()
     val trucks by viewModel.dataListTrucksState.collectAsStateWithLifecycle()
-    val uiState by viewModel.foodTruckUserUiState.collectAsStateWithLifecycle()
+    val uiState by viewModel.loaderUiState.collectAsStateWithLifecycle()
 
     when (uiState) {
         is ResultWrapper.Success -> {
@@ -74,6 +74,7 @@ fun TruckList(
                     NavigationItem.MapTruck.route
                         .replace("{documentId}", "${selectedTruck.documentId}")
                 )
+                viewModel.updateSelectedTruck(selectedTruck)
                 Log.d("TruckList", "selectedTruck ===> $selectedTruck")
             })
         }

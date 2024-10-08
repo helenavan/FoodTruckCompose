@@ -9,8 +9,10 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.toulousehvl.myfoodtruck.data.ResultWrapper
 import com.toulousehvl.myfoodtruck.data.model.Truck
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
 @HiltViewModel
@@ -18,15 +20,22 @@ class MainViewModel @Inject constructor(
     private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
-    private val _foodTruckUserUiState = MutableStateFlow<ResultWrapper<Truck>>(ResultWrapper.Loading(true))
-    val foodTruckUserUiState: StateFlow<ResultWrapper<Truck>> = _foodTruckUserUiState
+    private val _loaderUiState = MutableStateFlow<ResultWrapper<Truck>>(ResultWrapper.Loading(true))
+    val loaderUiState: StateFlow<ResultWrapper<Truck>> = _loaderUiState
 
     private val _dataListTrucksState = MutableStateFlow<List<Truck>>(emptyList())
     val dataListTrucksState: StateFlow<List<Truck>> = _dataListTrucksState
 
-    val selectedTruckState: MutableState<Truck?> = mutableStateOf(savedStateHandle["selectedTruck"])
-    val selectedTruck: Truck?
-        get() = selectedTruckState.value
+    val selectedTruckState: MutableState<String?> = mutableStateOf(savedStateHandle["selectedTruck"])
+
+
+    //fetch data from firestore
+    private val truckInfo: Flow<Truck?> = flow {
+        dataListTrucksState.collect { trucks ->
+            val selectedTruck = trucks.find { it.documentId == selectedTruckState.value }
+            emit(selectedTruck)
+        }
+    }
 
 
     init {
@@ -45,14 +54,14 @@ class MainViewModel @Inject constructor(
                 _dataListTrucksState.value = dataList
 
                 if (dataList.isNotEmpty()) {
-                    _foodTruckUserUiState.value = ResultWrapper.Success(dataList.first())
+                    _loaderUiState.value = ResultWrapper.Success(dataList.first())
                 } else {
-                    _foodTruckUserUiState.value = ResultWrapper.Error(Exception("No data found"))
+                    _loaderUiState.value = ResultWrapper.Error(Exception("No data found"))
                 }
             }
             .addOnFailureListener { exception ->
                 Log.w("Firestore", "Error getting documents: ", exception)
-                _foodTruckUserUiState.value = ResultWrapper.Error(exception)
+                _loaderUiState.value = ResultWrapper.Error(exception)
             }
     }
 
@@ -75,7 +84,7 @@ class MainViewModel @Inject constructor(
     }
 
     fun updateSelectedTruck(truck: Truck) {
-        selectedTruckState.value = truck
+        selectedTruckState.value = truck.documentId
         savedStateHandle["selectedTruck"] = truck
         Log.d("MainViewModel", "updateSelectedTruck ===> ${selectedTruckState.value}")
     }
