@@ -84,7 +84,6 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.androidx.runtime.livedata)
     implementation(libs.ui)
-    implementation(libs.play.services.location)
     implementation(libs.moshi.kotlin)
     implementation(libs.androidx.multidex)
 
@@ -109,10 +108,12 @@ dependencies {
     implementation(libs.androidx.hilt.navigation.compose)
     kapt(libs.hilt.android.compiler)
 
-
     //Map
     implementation(libs.osmdroid.android)
     implementation(libs.androidx.activity)
+
+    //Google Service
+    implementation (libs.play.services.location)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

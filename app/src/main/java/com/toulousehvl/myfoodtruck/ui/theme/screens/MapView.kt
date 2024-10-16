@@ -2,6 +2,7 @@ package com.toulousehvl.myfoodtruck.ui.theme.screens
 
 import android.util.Log
 import android.widget.Toast
+import androidx.appcompat.content.res.AppCompatResources.getDrawable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -19,6 +20,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.toulousehvl.myfoodtruck.MainViewModel
+import com.toulousehvl.myfoodtruck.R
 import com.toulousehvl.myfoodtruck.ui.theme.composables.rememberMapViewWithLifecycle
 import com.toulousehvl.myfoodtruck.ui.theme.theme.YellowBanane
 import org.osmdroid.config.Configuration
@@ -35,7 +37,7 @@ fun MapView(
     viewModel: MainViewModel = hiltViewModel()
 ) {
     val selectedTruck by viewModel.selectedTruckState
-    val trucks by viewModel.dataListTrucksState.collectAsStateWithLifecycle()
+    val listOfTrucks by viewModel.dataListTrucksState.collectAsStateWithLifecycle()
 
     var mLocationOverlay: MyLocationNewOverlay? = null
     val mapView = rememberMapViewWithLifecycle()
@@ -63,16 +65,38 @@ fun MapView(
                 myLocation?.let {
                     startPoint = GeoPoint(it.latitude, it.longitude)
                 }
+                Log.d("MapView", "user location ===> ${mLocationOverlay?.myLocation}")
             }
             mapController.animateTo(startPoint, 16.5, 5)
             view.overlays.add(mLocationOverlay)
 
-            Log.d("MapView", "truck List ===> ${trucks.map { it.nameTruck }}")
+            Log.d("MapView", "truck List ===> ${listOfTrucks.map { it.nameTruck }}")
 
             val marker = Marker(mapView)
             marker.title = "Info Marker"
             mapView.overlays.add(marker)
 
+            for (truck in listOfTrucks) {
+                val truckGeoPoint = GeoPoint(truck.latd!!, truck.lgtd!!)
+                val truckMarker = Marker(mapView)
+                //custom marker
+                truckMarker.icon = when (truck.categorie) {
+                    "Italien/Pizza" -> getDrawable(view.context, R.drawable.ic_marqueur_italien)
+                    "Thaï" -> getDrawable(view.context, R.drawable.ic_marqueur_thai)
+                    "Sushi" -> getDrawable(view.context, R.drawable.ic_marqueur_asia)
+                    "African" -> getDrawable(view.context, R.drawable.ic_marqueur_africain)
+                    "Kebab" -> getDrawable(view.context, R.drawable.ic_marqueur_kebab)
+                    else -> getDrawable(view.context, R.drawable.ic_marqueur_burger)
+                }
+
+                truckMarker.position = truckGeoPoint
+                mapView.overlays.add(truckMarker)
+            }
+
+            val selectedTruck = listOfTrucks.find { it.documentId == truckId }
+            Log.d("MapView", "selectedTruck ===> $selectedTruck")
+
+            //TODO
             val selectedGeoPoint = selectedTruck?.let {
                 viewModel.dataListTrucksState.value.find { it.documentId == truckId }?.let {
                     GeoPoint(it.latd!!, it.lgtd!!)
