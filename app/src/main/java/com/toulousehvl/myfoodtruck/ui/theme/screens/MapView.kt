@@ -1,7 +1,6 @@
 package com.toulousehvl.myfoodtruck.ui.theme.screens
 
 import android.util.Log
-import android.widget.Toast
 import androidx.appcompat.content.res.AppCompatResources.getDrawable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -43,7 +42,6 @@ fun MapView(
     val mapView = rememberMapViewWithLifecycle()
 
     Box(modifier = Modifier.fillMaxSize()) {
-        Log.d(("MapView"), "truckId selected ===> $truckId + ${selectedTruck}")
 
         Configuration.getInstance().userAgentValue = BuildConfig.LIBRARY_PACKAGE_NAME
 
@@ -65,12 +63,9 @@ fun MapView(
                 myLocation?.let {
                     startPoint = GeoPoint(it.latitude, it.longitude)
                 }
-                Log.d("MapView", "user location ===> ${mLocationOverlay?.myLocation}")
             }
             mapController.animateTo(startPoint, 16.5, 5)
             view.overlays.add(mLocationOverlay)
-
-            Log.d("MapView", "truck List ===> ${listOfTrucks.map { it.nameTruck }}")
 
             val marker = Marker(mapView)
             marker.title = "Info Marker"
@@ -90,35 +85,20 @@ fun MapView(
                 }
 
                 truckMarker.position = truckGeoPoint
+                truckMarker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
+                truckMarker.title = truck.nameTruck
+                truckMarker.snippet = truck.categorie
+
                 mapView.overlays.add(truckMarker)
             }
 
-            val selectedTruck = listOfTrucks.find { it.documentId == truckId }
+            //TODO zoom sur le marqueur
+//            val selectedTruckInList = listOfTrucks.find { it.documentId == truckId }
+//            mapController.animateTo(selectedTruckInList?.let {GeoPoint(it.latd!!, it.lgtd!!)}, 16.5, 5)
+
+            view.overlays.add(mLocationOverlay)
             Log.d("MapView", "selectedTruck ===> $selectedTruck")
 
-            //TODO
-            val selectedGeoPoint = selectedTruck?.let {
-                viewModel.dataListTrucksState.value.find { it.documentId == truckId }?.let {
-                    GeoPoint(it.latd!!, it.lgtd!!)
-                }
-            }
-
-            Log.d("MapView", "selectedGeoPoint ===> $selectedGeoPoint")
-
-
-            // Mettre à jour le contenu du marqueur lorsque l'utilisateur sélectionne un GeoPoint
-//            selectedGeoPoint?.let {
-//                marker.position = it
-//                marker.snippet = "Latitude: ${it.latitude}, Longitude: ${it.longitude}"
-//                marker.setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
-//                marker.showInfoWindow()
-//            }
-
-            // Handle marker click events
-            marker.setOnMarkerClickListener { _, _ ->
-                Toast.makeText(view.context, "Marker clicked!", Toast.LENGTH_SHORT).show()
-                true
-            }
 
             // Refresh the map
             view.invalidate()
