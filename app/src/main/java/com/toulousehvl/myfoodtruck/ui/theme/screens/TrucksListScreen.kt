@@ -1,6 +1,5 @@
 package com.toulousehvl.myfoodtruck.ui.theme.screens
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -38,15 +37,21 @@ import com.toulousehvl.myfoodtruck.data.model.Truck
 import com.toulousehvl.myfoodtruck.navigation.NavigationItem
 
 @Composable
-fun TrucksListScreen(navController: NavHostController) {
-     val viewModel: MainViewModel = hiltViewModel()
+fun TrucksListScreen(navController: NavHostController, viewModel: MainViewModel = hiltViewModel()) {
     val trucks by viewModel.dataListTrucksState.collectAsStateWithLifecycle()
     val uiState by viewModel.loaderUiState.collectAsStateWithLifecycle()
 
     when (uiState) {
         is ResultWrapper.Success -> {
             Column(modifier = Modifier.fillMaxSize()) {
-                TruckList(trucks = trucks, navController = navController, viewModel)
+                TruckList(trucks = trucks,
+                    onItemClick = { selectedTruck ->
+                        navController.navigate(
+                            NavigationItem.MapTruck.route
+                                .replace("{documentId}", "${selectedTruck.documentId}")
+                        )
+                        viewModel.updateSelectedTruck(selectedTruck)
+                    })
             }
         }
         is ResultWrapper.Error -> {
@@ -61,22 +66,14 @@ fun TrucksListScreen(navController: NavHostController) {
 @Composable
 fun TruckList(
     trucks: List<Truck>,
-    navController: NavHostController,
-    viewModel: MainViewModel
+    onItemClick: (Truck) -> Unit
 ) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
     ) {
         items(items = trucks) { truck ->
-            TruckItem(truck = truck, onItemClick = { selectedTruck ->
-                navController.navigate(
-                    NavigationItem.MapTruck.route
-                        .replace("{documentId}", "${selectedTruck.documentId}")
-                )
-                viewModel.updateSelectedTruck(selectedTruck)
-                Log.d("TruckList", "selectedTruck ===> $selectedTruck")
-            })
+            TruckItem(truck = truck, onItemClick = { clicked -> onItemClick(clicked) })
         }
     }
 }

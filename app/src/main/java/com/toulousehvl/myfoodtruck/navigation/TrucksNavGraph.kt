@@ -1,6 +1,5 @@
 package com.toulousehvl.myfoodtruck.navigation
 
-import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -17,8 +16,7 @@ import com.toulousehvl.myfoodtruck.ui.theme.screens.TrucksListScreen
 
 @Composable
 fun TrucksNavGraph(
-    navController: NavHostController,
-    viewModel: MainViewModel
+    navController: NavHostController
 ) {
     NavHost(navController, startDestination = MapTruck.route) {
 
@@ -27,7 +25,7 @@ fun TrucksNavGraph(
             arguments = listOf(navArgument("documentId") { defaultValue = "1" })
         ) { backStackEntry ->
             val truckId = backStackEntry.arguments?.getString("documentId")
-            MapView(truckId = truckId, viewModel = viewModel, navController)
+            MapView(truckId = truckId)
         }
 
         composable(ListTrucks.route) {

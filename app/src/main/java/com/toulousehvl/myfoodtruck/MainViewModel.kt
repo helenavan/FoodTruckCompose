@@ -83,9 +83,10 @@ class MainViewModel @Inject constructor(
             }
     }
 
+    //TODO
     fun updateSelectedTruck(truck: Truck) {
         selectedTruckState.value = truck.documentId
-        savedStateHandle["selectedTruck"] = truck
+      //  savedStateHandle["selectedTruck"] = truck
         Log.d("MainViewModel", "updateSelectedTruck ===> ${selectedTruckState.value}")
     }
 }

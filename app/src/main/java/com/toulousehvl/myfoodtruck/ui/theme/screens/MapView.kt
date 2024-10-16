@@ -18,7 +18,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavHostController
 import com.toulousehvl.myfoodtruck.MainViewModel
 import com.toulousehvl.myfoodtruck.ui.theme.composables.rememberMapViewWithLifecycle
 import com.toulousehvl.myfoodtruck.ui.theme.theme.YellowBanane
@@ -31,7 +30,10 @@ import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay
 
 @Composable
-fun MapView(truckId: String? = "null", viewModel: MainViewModel = hiltViewModel(), navHostController: NavHostController) {
+fun MapView(
+    truckId: String? = "null",
+    viewModel: MainViewModel = hiltViewModel()
+) {
     val selectedTruck by viewModel.selectedTruckState
     val trucks by viewModel.dataListTrucksState.collectAsStateWithLifecycle()
 

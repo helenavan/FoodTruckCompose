@@ -38,8 +38,6 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-    private val viewModel: MainViewModel by viewModels()
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -67,7 +65,7 @@ class MainActivity : ComponentActivity() {
                         showPermissionResultText,
                         permissionResultText
                     )
-                    MainScreen(navController = navController, viewModel = viewModel)
+                    MainScreen(navController = navController)
                 }
             }
         }
@@ -76,8 +74,7 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun MainScreen(
-    navController: NavHostController,
-    viewModel: MainViewModel
+    navController: NavHostController
 ) {
     Scaffold(
         bottomBar = {
@@ -98,8 +95,7 @@ fun MainScreen(
                 )
         ) {
             TrucksNavGraph(
-                navController = navController,
-                viewModel = viewModel
+                navController = navController
             )
         }
     }
