@@ -25,9 +25,10 @@ sealed class CategoryTruck {
     data object Italian : CategoryTruck()
     data object Burger : CategoryTruck()
     data object Asian : CategoryTruck()
-    data object Sushi : CategoryTruck()
+    data object Japanese : CategoryTruck()
     data object African : CategoryTruck()
     data object Kebab : CategoryTruck()
+    data object Other : CategoryTruck()
 
     @Serializable
     companion object {
@@ -35,11 +36,11 @@ sealed class CategoryTruck {
             return when (this) {
                 "Italien/Pizza" -> Italian
                 "Burger" -> Burger
-                "Thaï" -> Asian
-                "Sushi" -> Sushi
-                "African" -> African
+                "Asia" -> Asian
+                "Japonais" -> Japanese
+                "Africain" -> African
                 "Kebab" -> Kebab
-                else -> null
+                else -> Other
             }
         }
 
@@ -47,8 +48,8 @@ sealed class CategoryTruck {
             return when (this) {
                 is Italian -> "Italien/Pizza"
                 is Burger -> "Burger"
-                is Asian -> "Thaï"
-                is Sushi -> "Sushi"
+                is Asian -> "Asia"
+                is Japanese -> "Sushi"
                 is African -> "African"
                 is Kebab -> "Kebab"
                 else -> "Burger"

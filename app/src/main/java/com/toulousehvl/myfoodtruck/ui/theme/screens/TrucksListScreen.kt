@@ -124,7 +124,7 @@ private fun setTruckCategorie(category: String): Int {
         CategoryTruck.Italian.toCategoryTruckString() -> R.drawable.ic_frittes
         CategoryTruck.Burger.toCategoryTruckString() -> R.drawable.ic_burger
         CategoryTruck.Asian.toCategoryTruckString() -> R.drawable.ic_thai
-        CategoryTruck.Sushi.toCategoryTruckString() -> R.drawable.ic_sushi
+        CategoryTruck.Japanese.toCategoryTruckString() -> R.drawable.ic_sushi
         CategoryTruck.African.toCategoryTruckString() -> R.drawable.ic_africain
         CategoryTruck.Kebab.toCategoryTruckString() -> R.drawable.ic_kebab
         else -> R.drawable.ic_frittes

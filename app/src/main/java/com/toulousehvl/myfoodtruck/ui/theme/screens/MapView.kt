@@ -35,7 +35,7 @@ fun MapView(
     truckId: String? = "null",
     viewModel: MainViewModel = hiltViewModel()
 ) {
-    val selectedTruck by viewModel.selectedTruckState
+   // val selectedTruck by viewModel.selectedTruckState
     val listOfTrucks by viewModel.dataListTrucksState.collectAsStateWithLifecycle()
 
     var mLocationOverlay: MyLocationNewOverlay? = null
@@ -92,12 +92,12 @@ fun MapView(
                 mapView.overlays.add(truckMarker)
             }
 
-            //TODO zoom sur le marqueur
+            //TODO zoom sur le marqueur selectionne via la liste
 //            val selectedTruckInList = listOfTrucks.find { it.documentId == truckId }
 //            mapController.animateTo(selectedTruckInList?.let {GeoPoint(it.latd!!, it.lgtd!!)}, 16.5, 5)
 
             view.overlays.add(mLocationOverlay)
-            Log.d("MapView", "selectedTruck ===> $selectedTruck")
+            Log.d("MapView", "selectedTruck ===> $truckId")
 
 
             // Refresh the map

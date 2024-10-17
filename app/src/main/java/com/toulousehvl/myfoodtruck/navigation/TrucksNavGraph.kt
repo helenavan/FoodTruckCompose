@@ -5,7 +5,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.toulousehvl.myfoodtruck.MainViewModel
 import com.toulousehvl.myfoodtruck.navigation.NavigationItem.Infos
 import com.toulousehvl.myfoodtruck.navigation.NavigationItem.ListTrucks
 import com.toulousehvl.myfoodtruck.navigation.NavigationItem.MapTruck
