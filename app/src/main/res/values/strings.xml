@@ -1,3 +1,23 @@
 <resources>
     <string name="app_name">My Food Truck</string>
+    <string name="ajouter_un_foodtruck">Ajouter un FoodTruck</string>
+    <string name="nom_max_caract_res">Nom (max %1$s caractères)</string>
+    <string name="veuillez_entrer_un_nom">Veuillez entrer un nom</string>
+    <string name="le_texte_d_passe_la_limite_de_caract_res">Le texte dépasse la limite de %1$s caractères</string>
+    <string name="adresse">Adresse</string>
+    <string name="ajouter">Ajouter</string>
+    <string name="choisir_une_cat_gorie">Choisir une catégorie</string>
+    <string name="veuillez_entrer_une_adresse_valide">Veuillez entrer une adresse valide</string>
+    <string name="adresse_max_characteres">l\'adresse est trop longue</string>
+
+    <string-array name="food_categories">
+        <item>Italien/Pizza</item>
+        <item>Burger</item>
+        <item>Asiatique</item>
+        <item>Japonais</item>
+        <item>Africain</item>
+        <item>Kebab</item>
+        <item>Autre</item>
+    </string-array>
+
 </resources>

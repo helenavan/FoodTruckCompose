@@ -36,7 +36,7 @@ sealed class CategoryTruck {
             return when (this) {
                 "Italien/Pizza" -> Italian
                 "Burger" -> Burger
-                "Asia" -> Asian
+                "Asiatique" -> Asian
                 "Japonais" -> Japanese
                 "Africain" -> African
                 "Kebab" -> Kebab
@@ -48,9 +48,9 @@ sealed class CategoryTruck {
             return when (this) {
                 is Italian -> "Italien/Pizza"
                 is Burger -> "Burger"
-                is Asian -> "Asia"
-                is Japanese -> "Sushi"
-                is African -> "African"
+                is Asian -> "Asiatique"
+                is Japanese -> "Japonais"
+                is African -> "Africain"
                 is Kebab -> "Kebab"
                 else -> "Burger"
             }

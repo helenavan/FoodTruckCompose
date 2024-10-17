@@ -95,7 +95,7 @@ fun TruckItem(truck: Truck, onItemClick: (Truck) -> Unit) {
             Image(
                 modifier = Modifier.padding(4.dp, 2.dp, 2.dp, 4.dp),
                 painter = painterResource(id = setTruckCategorie(truck.categorie.toString())),
-                contentDescription = "frittes"
+                contentDescription = "frites"
             )
 
             Column {
@@ -121,13 +121,13 @@ fun TruckItem(truck: Truck, onItemClick: (Truck) -> Unit) {
 
 private fun setTruckCategorie(category: String): Int {
     return when (category) {
-        CategoryTruck.Italian.toCategoryTruckString() -> R.drawable.ic_frittes
+        CategoryTruck.Italian.toCategoryTruckString() -> R.drawable.ic_pizza
         CategoryTruck.Burger.toCategoryTruckString() -> R.drawable.ic_burger
         CategoryTruck.Asian.toCategoryTruckString() -> R.drawable.ic_thai
         CategoryTruck.Japanese.toCategoryTruckString() -> R.drawable.ic_sushi
         CategoryTruck.African.toCategoryTruckString() -> R.drawable.ic_africain
         CategoryTruck.Kebab.toCategoryTruckString() -> R.drawable.ic_kebab
-        else -> R.drawable.ic_frittes
+        else -> R.drawable.ic_vegetarien
     }
 }
 
