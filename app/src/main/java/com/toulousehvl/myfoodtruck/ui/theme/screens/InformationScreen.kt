@@ -44,11 +44,13 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.toulousehvl.myfoodtruck.R
+import com.toulousehvl.myfoodtruck.data.model.Truck
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun InformationScreen() {
+fun InformationScreen(viewModel: InformationViewModel = hiltViewModel()) {
     Column(
         modifier = Modifier.padding(16.dp),
         verticalArrangement = Arrangement.Center,
@@ -56,14 +58,16 @@ fun InformationScreen() {
     ) {
         var truckName by remember { mutableStateOf("") }
         var truckAddress by remember { mutableStateOf("") }
-        var truckCategory by remember { mutableStateOf("") }
+        val categories =
+            LocalContext.current.resources.getStringArray(R.array.food_categories).toList()
+        var selectedCategory by remember { mutableStateOf(categories[0]) }
         var showError by remember { mutableStateOf(false) }
         val maxLength = 30
         val maxLengthAddress = 100
 
         var isLoading by remember { mutableStateOf(false) }
         val context = LocalContext.current
-        var result by remember { mutableStateOf<String?>(null) }
+        var result by remember { mutableStateOf<Address?>(null) }
 
         Text(text = stringResource(R.string.ajouter_un_foodtruck))
         Spacer(modifier = Modifier.height(16.dp))
@@ -79,7 +83,10 @@ fun InformationScreen() {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        DropdownMenuWithFocus()
+        DropdownMenuWithFocus(
+            selectedCategory = selectedCategory,
+            categories = categories,
+            onCategorySelected = { selectedCategory = it })
 
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -105,13 +112,27 @@ fun InformationScreen() {
 
         SubmitButton(
             onClick = {
-                if (truckName.isEmpty() || truckAddress.isEmpty() || (truckCategory.length >= maxLengthAddress)) {
+                if (truckName.isEmpty() || truckAddress.isEmpty()) {
                     showError = true
                 } else {
                     showError = false
                     isLoading = true
                     // Lancer la recherche d'adresse dans une coroutine
                     result = getLatLngFromAddress(context, truckAddress)
+                    viewModel.addDataToFirestore(
+                        Truck(
+                            nameTruck = truckName,
+                            categorie = selectedCategory,
+                            latd = result?.latitude,
+                            lgtd = result?.longitude,
+                            date = System.currentTimeMillis(),
+                            adresse = truckAddress,
+                            zipCode = result?.postalCode,
+                            city = result?.locality,
+                            country = result?.countryName,
+                            street = result?.thoroughfare
+                        )
+                    )
                     isLoading = false
                     Log.d("result", "===" + result.toString())
                 }
@@ -123,7 +144,7 @@ fun InformationScreen() {
 }
 
 @Composable
-fun SubmitButton(onClick: () -> Unit, isLoading: Boolean, result: String?) {
+fun SubmitButton(onClick: () -> Unit, isLoading: Boolean, result: Address?) {
     Box(modifier = Modifier.padding(40.dp, 0.dp, 40.dp, 0.dp)) {
         Button(
             onClick = onClick,
@@ -140,10 +161,6 @@ fun SubmitButton(onClick: () -> Unit, isLoading: Boolean, result: String?) {
 
     if (isLoading) {
         CircularProgressIndicator(modifier = Modifier.size(20.dp))
-    }
-
-    result?.let {
-        Text(text = it)
     }
 }
 
@@ -189,28 +206,30 @@ fun CustomTextField(
     }
 }
 
-fun getLatLngFromAddress(context: Context, mAddress: String): String {
+fun getLatLngFromAddress(context: Context, mAddress: String): Address? {
     val coder = Geocoder(context)
-    lateinit var address: List<Address>
     return try {
-        address = coder.getFromLocationName(mAddress, 5) as List<Address>
-        if (address.isEmpty()) {
-            "Fail to find Lat,Lng"
+       val addressList: List<Address> = coder.getFromLocationName(mAddress, 5) as List<Address>
+        if (addressList.isEmpty()) {
+            null
         } else {
-            val location = address[0]
-            " Latitude: ${location.latitude}\n Longitude: ${location.longitude}"
+            addressList[0]
         }
     } catch (e: Exception) {
-        return "Fail to find Lat,Lng"
+        e.printStackTrace()
+        null
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DropdownMenuWithFocus() {
-    val categories = LocalContext.current.resources.getStringArray(R.array.food_categories).toList()
+fun DropdownMenuWithFocus(
+    selectedCategory: String,
+    categories: List<String>,
+    onCategorySelected: (String) -> Unit
+) {
+    // val categories = LocalContext.current.resources.getStringArray(R.array.food_categories).toList()
     var expanded by remember { mutableStateOf(false) }
-    var selectedOption by remember { mutableStateOf(categories[0]) }
 
     val icon = if (expanded)
         Icons.Filled.ArrowDropUp
@@ -231,8 +250,9 @@ fun DropdownMenuWithFocus() {
         modifier = Modifier.focusRequester(focusRequester)
     ) {
         OutlinedTextField(
-            value = selectedOption,
-            onValueChange = { selectedOption = it },
+            value = selectedCategory,
+            // onValueChange = { selectedCategory = it },
+            onValueChange = {},
             readOnly = true,
             label = { Text(stringResource(R.string.choisir_une_cat_gorie)) },
             trailingIcon = {
@@ -252,7 +272,7 @@ fun DropdownMenuWithFocus() {
                 DropdownMenuItem(
                     text = { Text(category) },
                     onClick = {
-                        selectedOption = category
+                        onCategorySelected(category)
                         expanded = false
                     },
                     contentPadding = ExposedDropdownMenuDefaults.ItemContentPadding

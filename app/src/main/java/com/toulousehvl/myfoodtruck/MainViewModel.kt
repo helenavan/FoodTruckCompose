@@ -43,6 +43,9 @@ class MainViewModel @Inject constructor(
     }
 
     private fun fetchDataFromFirestore() {
+        val currentTimestamp = System.currentTimeMillis()
+        val twoHoursAgo = currentTimestamp - 86400000
+
         val db = FirebaseFirestore.getInstance()
 
         db.collection("foodtrucks")
@@ -51,7 +54,9 @@ class MainViewModel @Inject constructor(
                 val dataList = result.documents.mapNotNull { document ->
                     document.toObject(Truck::class.java)?.copy(document.id)
                 }
-                _dataListTrucksState.value = dataList
+                //filter by date
+                _dataListTrucksState.value =
+                    dataList.filter { foodtruck -> if (foodtruck.date != null) foodtruck.date!! > twoHoursAgo else false }
 
                 if (dataList.isNotEmpty()) {
                     _loaderUiState.value = ResultWrapper.Success(dataList.first())
@@ -62,24 +67,6 @@ class MainViewModel @Inject constructor(
             .addOnFailureListener { exception ->
                 Log.w("Firestore", "Error getting documents: ", exception)
                 _loaderUiState.value = ResultWrapper.Error(exception)
-            }
-    }
-
-    fun addDataToFirestore(data: String) {
-        val db = FirebaseFirestore.getInstance()
-
-        val newData = hashMapOf(
-            "fieldName" to data
-        )
-
-        db.collection("myCollection")
-            .add(newData)
-            .addOnSuccessListener {
-                Log.d("Firestore", "DocumentSnapshot added with ID: ${it.id}")
-                fetchDataFromFirestore()
-            }
-            .addOnFailureListener { e ->
-                Log.w("Firestore", "Error adding document", e)
             }
     }
 

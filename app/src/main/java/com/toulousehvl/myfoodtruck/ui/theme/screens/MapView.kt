@@ -81,6 +81,7 @@ fun MapView(
                     "Sushi" -> getDrawable(view.context, R.drawable.ic_marqueur_asia)
                     "African" -> getDrawable(view.context, R.drawable.ic_marqueur_africain)
                     "Kebab" -> getDrawable(view.context, R.drawable.ic_marqueur_kebab)
+                    "Japonais" -> getDrawable(view.context, R.drawable.ic_marqueur_japonais)
                     else -> getDrawable(view.context, R.drawable.ic_marqueur_burger)
                 }
 
