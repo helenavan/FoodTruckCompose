@@ -1,5 +1,9 @@
 package com.toulousehvl.myfoodtruck.ui.theme.screens
 
+import android.content.Context
+import android.location.Address
+import android.location.Geocoder
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -8,12 +12,14 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.ArrowDropUp
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
@@ -55,6 +61,10 @@ fun InformationScreen() {
         val maxLength = 30
         val maxLengthAddress = 100
 
+        var isLoading by remember { mutableStateOf(false) }
+        val context = LocalContext.current
+        var result by remember { mutableStateOf<String?>(null) }
+
         Text(text = stringResource(R.string.ajouter_un_foodtruck))
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -93,16 +103,27 @@ fun InformationScreen() {
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        SubmitButton(onClick = {
-            //TODO custom error by field
-            showError =
-                truckName.isEmpty() || truckAddress.isEmpty() || (truckCategory.length >= maxLengthAddress)
-        })
+        SubmitButton(
+            onClick = {
+                if (truckName.isEmpty() || truckAddress.isEmpty() || (truckCategory.length >= maxLengthAddress)) {
+                    showError = true
+                } else {
+                    showError = false
+                    isLoading = true
+                    // Lancer la recherche d'adresse dans une coroutine
+                    result = getLatLngFromAddress(context, truckAddress)
+                    isLoading = false
+                    Log.d("result", "===" + result.toString())
+                }
+            },
+            isLoading = isLoading,
+            result = result
+        )
     }
 }
 
 @Composable
-fun SubmitButton(onClick: () -> Unit) {
+fun SubmitButton(onClick: () -> Unit, isLoading: Boolean, result: String?) {
     Box(modifier = Modifier.padding(40.dp, 0.dp, 40.dp, 0.dp)) {
         Button(
             onClick = onClick,
@@ -113,6 +134,16 @@ fun SubmitButton(onClick: () -> Unit) {
         ) {
             Text(text = stringResource(R.string.ajouter))
         }
+    }
+
+    Spacer(modifier = Modifier.height(16.dp))
+
+    if (isLoading) {
+        CircularProgressIndicator(modifier = Modifier.size(20.dp))
+    }
+
+    result?.let {
+        Text(text = it)
     }
 }
 
@@ -155,6 +186,22 @@ fun CustomTextField(
             color = Color.Red,
             style = MaterialTheme.typography.bodySmall
         )
+    }
+}
+
+fun getLatLngFromAddress(context: Context, mAddress: String): String {
+    val coder = Geocoder(context)
+    lateinit var address: List<Address>
+    return try {
+        address = coder.getFromLocationName(mAddress, 5) as List<Address>
+        if (address.isEmpty()) {
+            "Fail to find Lat,Lng"
+        } else {
+            val location = address[0]
+            " Latitude: ${location.latitude}\n Longitude: ${location.longitude}"
+        }
+    } catch (e: Exception) {
+        return "Fail to find Lat,Lng"
     }
 }
 
