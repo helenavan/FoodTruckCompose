@@ -20,6 +20,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -89,7 +90,7 @@ fun TruckItem(truck: Truck, onItemClick: (Truck) -> Unit) {
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth().padding(start = 4.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Image(
@@ -100,7 +101,7 @@ fun TruckItem(truck: Truck, onItemClick: (Truck) -> Unit) {
 
             Column {
                 Text(
-                    modifier = Modifier.padding(4.dp, 2.dp, 4.dp, 4.dp),
+                    modifier = Modifier.padding(8.dp, 2.dp, 4.dp),
                     text = "${truck.nameTruck}",
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
@@ -108,7 +109,14 @@ fun TruckItem(truck: Truck, onItemClick: (Truck) -> Unit) {
                     fontWeight = FontWeight.Bold
                 )
                 Text(
-                    modifier = Modifier.padding(4.dp, 2.dp, 4.dp, 4.dp),
+                    modifier = Modifier.padding(8.dp, 2.dp, 4.dp),
+                    text = "${truck.categorie}",
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    fontStyle = FontStyle.Italic
+                )
+                Text(
+                    modifier = Modifier.padding(8.dp, 2.dp, 4.dp, 4.dp),
                     text = "${truck.adresse}",
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis

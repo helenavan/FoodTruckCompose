@@ -3,7 +3,6 @@ package com.toulousehvl.myfoodtruck.ui.theme.screens
 import android.content.Context
 import android.location.Address
 import android.location.Geocoder
-import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -46,7 +45,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.toulousehvl.myfoodtruck.R
-import com.toulousehvl.myfoodtruck.data.model.Truck
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -56,25 +54,25 @@ fun InformationScreen(viewModel: InformationViewModel = hiltViewModel()) {
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        var truckName by remember { mutableStateOf("") }
-        var truckAddress by remember { mutableStateOf("") }
+        val truckName = viewModel.truckName
+        val truckAddress = viewModel.truckAddress
         val categories =
             LocalContext.current.resources.getStringArray(R.array.food_categories).toList()
-        var selectedCategory by remember { mutableStateOf(categories[0]) }
-        var showError by remember { mutableStateOf(false) }
+        val selectedCategory = viewModel.selectedCategory
+        val showError = viewModel.showError
         val maxLength = 30
         val maxLengthAddress = 100
 
-        var isLoading by remember { mutableStateOf(false) }
+        val isLoading = viewModel.isLoading
         val context = LocalContext.current
-        var result by remember { mutableStateOf<Address?>(null) }
+        val result = viewModel.result
 
         Text(text = stringResource(R.string.ajouter_un_foodtruck))
         Spacer(modifier = Modifier.height(16.dp))
 
         CustomTextField(
             value = truckName,
-            onValueChange = { truckName = it },
+            onValueChange = viewModel::onTruckNameChange,
             label = stringResource(id = R.string.nom_max_caract_res, maxLength),
             errorMessage = if (truckName.isEmpty() && showError) stringResource(R.string.veuillez_entrer_un_nom) else null,
             maxLength = maxLength,
@@ -84,15 +82,16 @@ fun InformationScreen(viewModel: InformationViewModel = hiltViewModel()) {
         Spacer(modifier = Modifier.height(16.dp))
 
         DropdownMenuWithFocus(
-            selectedCategory = selectedCategory,
+            selectedCategory = selectedCategory.toString(),
             categories = categories,
-            onCategorySelected = { selectedCategory = it })
+            onCategorySelected = viewModel::onCategorySelected
+        )
 
         Spacer(modifier = Modifier.height(16.dp))
 
         CustomTextField(
             value = truckAddress,
-            onValueChange = { truckAddress = it },
+            onValueChange = viewModel::onTruckAddressChange,
             label = stringResource(id = R.string.adresse),
             errorMessage = when {
                 truckAddress.isEmpty() && showError -> stringResource(R.string.veuillez_entrer_une_adresse_valide)
@@ -112,39 +111,15 @@ fun InformationScreen(viewModel: InformationViewModel = hiltViewModel()) {
 
         SubmitButton(
             onClick = {
-                if (truckName.isEmpty() || truckAddress.isEmpty()) {
-                    showError = true
-                } else {
-                    showError = false
-                    isLoading = true
-                    // Lancer la recherche d'adresse dans une coroutine
-                    result = getLatLngFromAddress(context, truckAddress)
-                    viewModel.addDataToFirestore(
-                        Truck(
-                            nameTruck = truckName,
-                            categorie = selectedCategory,
-                            latd = result?.latitude,
-                            lgtd = result?.longitude,
-                            date = System.currentTimeMillis(),
-                            adresse = truckAddress,
-                            zipCode = result?.postalCode,
-                            city = result?.locality,
-                            country = result?.countryName,
-                            street = result?.thoroughfare
-                        )
-                    )
-                    isLoading = false
-                    Log.d("result", "===" + result.toString())
-                }
+                viewModel.addFoodTruckToFirestore(context)
             },
-            isLoading = isLoading,
-            result = result
+            isLoading = isLoading
         )
     }
 }
 
 @Composable
-fun SubmitButton(onClick: () -> Unit, isLoading: Boolean, result: Address?) {
+fun SubmitButton(onClick: () -> Unit, isLoading: Boolean = false) {
     Box(modifier = Modifier.padding(40.dp, 0.dp, 40.dp, 0.dp)) {
         Button(
             onClick = onClick,
@@ -177,11 +152,9 @@ fun CustomTextField(
     OutlinedTextField(
         value = value,
         onValueChange = { newValue ->
-
             if (newValue.length <= maxLength) {
                 onValueChange(newValue.trimStart { it == '0' }.trimEnd { it == '0' })
             }
-
         },
         label = { Text(text = label) },
         trailingIcon = {

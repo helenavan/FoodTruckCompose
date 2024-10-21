@@ -77,11 +77,11 @@ fun MapView(
                 //custom marker
                 truckMarker.icon = when (truck.categorie) {
                     "Italien/Pizza" -> getDrawable(view.context, R.drawable.ic_marqueur_italien)
-                    "Thaï" -> getDrawable(view.context, R.drawable.ic_marqueur_thai)
-                    "Sushi" -> getDrawable(view.context, R.drawable.ic_marqueur_asia)
-                    "African" -> getDrawable(view.context, R.drawable.ic_marqueur_africain)
+                    "Asiatique" -> getDrawable(view.context, R.drawable.ic_marqueur_asia)
+                    "Africain" -> getDrawable(view.context, R.drawable.ic_marqueur_africain)
                     "Kebab" -> getDrawable(view.context, R.drawable.ic_marqueur_kebab)
                     "Japonais" -> getDrawable(view.context, R.drawable.ic_marqueur_japonais)
+                    "Burger" -> getDrawable(view.context, R.drawable.ic_marqueur_burger)
                     else -> getDrawable(view.context, R.drawable.ic_marqueur_burger)
                 }
 
