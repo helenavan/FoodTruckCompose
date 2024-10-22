@@ -14,5 +14,5 @@ sealed class NavigationItem(var route: String, var title: String, var icon: Int)
     data object ListTrucks : NavigationItem("Liste", "Liste", R.drawable.baseline_list_24)
 
     @Serializable
-    data object Infos : NavigationItem("Info", "Info", R.drawable.baseline_info_outline_24)
+    data object Infos : NavigationItem("Info", "Ajouter", R.drawable.baseline_add_24)
 }

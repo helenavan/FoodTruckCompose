@@ -18,6 +18,7 @@ import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.ArrowDropUp
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -27,6 +28,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -40,6 +42,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -67,8 +70,11 @@ fun InformationScreen(viewModel: InformationViewModel = hiltViewModel()) {
         val context = LocalContext.current
         val result = viewModel.result
 
-        Text(text = stringResource(R.string.ajouter_un_foodtruck))
-        Spacer(modifier = Modifier.height(16.dp))
+        Text(
+            text = stringResource(R.string.ajouter_un_foodtruck),
+            style = MaterialTheme.typography.headlineSmall
+        )
+        Spacer(modifier = Modifier.height(24.dp))
 
         CustomTextField(
             value = truckName,
@@ -82,7 +88,7 @@ fun InformationScreen(viewModel: InformationViewModel = hiltViewModel()) {
         Spacer(modifier = Modifier.height(16.dp))
 
         DropdownMenuWithFocus(
-            selectedCategory = selectedCategory.toString(),
+            selectedCategory = selectedCategory.ifEmpty { categories[0] },
             categories = categories,
             onCategorySelected = viewModel::onCategorySelected
         )
@@ -126,7 +132,14 @@ fun SubmitButton(onClick: () -> Unit, isLoading: Boolean = false) {
             shape = RoundedCornerShape(50.dp),
             modifier = Modifier
                 .fillMaxWidth()
-                .height(50.dp)
+                .height(50.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = colorResource(id = R.color.teal_700),
+                contentColor = Color.White,
+                disabledContainerColor = colorResource(id = R.color.teal_700),
+                disabledContentColor = Color.White
+            )
+
         ) {
             Text(text = stringResource(R.string.ajouter))
         }
@@ -167,7 +180,11 @@ fun CustomTextField(
         singleLine = singleLine,
         isError = errorMessage != null,
         modifier = Modifier.fillMaxWidth(),
-        maxLines = maxLines ?: 1
+        maxLines = maxLines ?: 1,
+        colors = OutlinedTextFieldDefaults.colors(
+            focusedBorderColor = colorResource(id = R.color.teal_700),
+            unfocusedBorderColor = colorResource(id = R.color.teal_700)
+        )
     )
 
     errorMessage?.let {
@@ -201,7 +218,6 @@ fun DropdownMenuWithFocus(
     categories: List<String>,
     onCategorySelected: (String) -> Unit
 ) {
-    // val categories = LocalContext.current.resources.getStringArray(R.array.food_categories).toList()
     var expanded by remember { mutableStateOf(false) }
 
     val icon = if (expanded)
@@ -224,7 +240,6 @@ fun DropdownMenuWithFocus(
     ) {
         OutlinedTextField(
             value = selectedCategory,
-            // onValueChange = { selectedCategory = it },
             onValueChange = {},
             readOnly = true,
             label = { Text(stringResource(R.string.choisir_une_cat_gorie)) },
@@ -234,7 +249,11 @@ fun DropdownMenuWithFocus(
             //need this line to show the dropdown menu
             modifier = Modifier
                 .menuAnchor()
-                .fillMaxWidth()
+                .fillMaxWidth(),
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedBorderColor = colorResource(id = R.color.teal_700),
+                unfocusedBorderColor = colorResource(id = R.color.teal_700)
+            )
         )
 
         ExposedDropdownMenu(

@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">My Food Truck</string>
-    <string name="ajouter_un_foodtruck">Ajouter un FoodTruck</string>
+    <string name="ajouter_un_foodtruck">Ajoutez votre propre FoodTruck</string>
     <string name="nom_max_caract_res">Nom (max %1$s caractères)</string>
     <string name="veuillez_entrer_un_nom">Veuillez entrer un nom</string>
     <string name="le_texte_d_passe_la_limite_de_caract_res">Le texte dépasse la limite de %1$s caractères</string>

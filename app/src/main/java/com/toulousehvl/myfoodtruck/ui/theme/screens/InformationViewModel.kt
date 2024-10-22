@@ -70,7 +70,8 @@ class InformationViewModel @Inject constructor() : ViewModel() {
                         zipCode = it.postalCode,
                         city = it.locality,
                         country = it.countryName,
-                        adresse = truckAddress
+                        adresse = truckAddress,
+                        num = it.subThoroughfare
                     )
                 )
             }
@@ -83,7 +84,6 @@ class InformationViewModel @Inject constructor() : ViewModel() {
         db.collection("foodtrucks")
             .add(truck)
             .addOnSuccessListener {
-                Log.d("Firestore", "DocumentSnapshot added with ID: ${it.id} ===")
                 //TODO update the list of foodtrucks ?
                 // fetchDataFromFirestore()
                 truckName = ""
@@ -92,7 +92,7 @@ class InformationViewModel @Inject constructor() : ViewModel() {
                 isLoading = false
             }
             .addOnFailureListener { e ->
-                Log.w("Firestore", "Error adding document ===", e)
+                Log.w("Firestore", "Error adding document", e)
                 isLoading = false
             }
     }

@@ -1,5 +1,6 @@
 package com.toulousehvl.myfoodtruck.navigation
 
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -13,6 +14,7 @@ import com.toulousehvl.myfoodtruck.ui.theme.screens.MapView
 import com.toulousehvl.myfoodtruck.ui.theme.screens.TrucksListScreen
 
 
+@ExperimentalMaterialApi
 @Composable
 fun TrucksNavGraph(
     navController: NavHostController
