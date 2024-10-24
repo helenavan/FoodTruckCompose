@@ -49,7 +49,7 @@ class InformationViewModel @Inject constructor() : ViewModel() {
 
     fun addFoodTruckToFirestore(context: Context) {
 
-        if (truckName.isEmpty() || truckAddress.isEmpty()) {
+        if (truckName.isEmpty() || truckAddress.isEmpty() || selectedCategory.isEmpty()) {
             showError = true
             return
         }
@@ -78,7 +78,7 @@ class InformationViewModel @Inject constructor() : ViewModel() {
         }
     }
 
-    fun addDataToFirestore(truck: Truck) {
+    private fun addDataToFirestore(truck: Truck) {
         isLoading = true
         val db = FirebaseFirestore.getInstance()
         db.collection("foodtrucks")

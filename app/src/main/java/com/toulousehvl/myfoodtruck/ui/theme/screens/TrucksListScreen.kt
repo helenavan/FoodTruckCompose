@@ -1,5 +1,6 @@
 package com.toulousehvl.myfoodtruck.ui.theme.screens
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -53,6 +54,8 @@ fun TrucksListScreen(
     val trucks by viewModel.dataListTrucksState.collectAsStateWithLifecycle()
     val uiState by viewModel.loaderUiState.collectAsStateWithLifecycle()
 
+    Log.d("TrucksListScreen", "truckslistscreen ===> $trucks")
+
     //animation
     val pullRefreshState = rememberPullRefreshState(
         refreshing = uiState is ResultWrapper.Loading,
@@ -84,6 +87,7 @@ fun TrucksListScreen(
             //TODO size and center
             is ResultWrapper.Loading -> {}
         }
+
         PullRefreshIndicator(
             refreshing = ResultWrapper.Loading(true) == uiState,
             state = pullRefreshState,
@@ -100,8 +104,10 @@ fun TruckList(
     trucks: List<Truck>,
     onItemClick: (Truck) -> Unit,
 ) {
-    if (trucks.isEmpty()) {
-        Text(text = "No trucks found")
+    if (trucks.isNullOrEmpty()) {
+        Text(text = "Aucun foodtruckt à afficher", modifier = Modifier
+            .padding(16.dp)
+            .fillMaxSize())
     }
 
     if (trucks.isNotEmpty()) {

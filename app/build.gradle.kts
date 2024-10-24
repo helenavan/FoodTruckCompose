@@ -87,6 +87,7 @@ dependencies {
     implementation(libs.ui)
     implementation(libs.moshi.kotlin)
     implementation(libs.androidx.multidex)
+    implementation(libs.lifecycle.runtime.compose)
 
     //Navigation
     implementation(libs.androidx.navigation.compose)
@@ -112,6 +113,8 @@ dependencies {
     //Map
     implementation(libs.osmdroid.android)
     implementation(libs.androidx.activity)
+    implementation(libs.osmdroid.mapsforge)
+    implementation(libs.osmdroid.wms)
 
     //Google Service
     implementation (libs.play.services.location)

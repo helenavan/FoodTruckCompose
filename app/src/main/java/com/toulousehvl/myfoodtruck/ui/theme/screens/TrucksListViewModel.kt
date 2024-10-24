@@ -11,6 +11,8 @@ import com.toulousehvl.myfoodtruck.data.model.Truck
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import java.time.ZoneId
+import java.time.ZonedDateTime
 import javax.inject.Inject
 
 @HiltViewModel
@@ -26,14 +28,14 @@ class TrucksListViewModel @Inject constructor(
     val selectedTruckState: MutableState<String?> =
         mutableStateOf(savedStateHandle["selectedTruck"])
 
-
     init {
         fetchDataFromFirestore()
     }
 
     fun fetchDataFromFirestore() {
-        val currentTimestamp = System.currentTimeMillis()
-        val twoHoursAgo = currentTimestamp - 86400000
+        val currentDateTime =
+            ZonedDateTime.now(ZoneId.systemDefault())  // Utilise la zone horaire locale
+        val twoHoursAgo = currentDateTime.minusHours(2).toInstant().toEpochMilli()
 
         val db = FirebaseFirestore.getInstance()
 
@@ -43,14 +45,23 @@ class TrucksListViewModel @Inject constructor(
                 val dataList = result.documents.mapNotNull { document ->
                     document.toObject(Truck::class.java)?.copy(documentId = document.id)
                 }
+
                 //filter by date
                 _dataListTrucksState.value =
-                    dataList.filter { foodtruck -> if (foodtruck.date != null) foodtruck.date!! > twoHoursAgo else false }
-                if (dataList.isNotEmpty()) {
-                    _loaderUiState.value = ResultWrapper.Success(dataList.first())
-                } else {
-                    _loaderUiState.value = ResultWrapper.Error(Exception("No data found"))
-                }
+                    dataList.filter { it.date != null && it.date!! >= twoHoursAgo }
+                //TODO filter by location
+//                _dataListTrucksState.value =
+//                    dataList.filter { foodtruck ->
+//                        val isRecent = foodtruck.date?.let { it >= twoHoursAgo } ?: false
+//                        val isNear = userLocationState?.let {
+//                            val foodTruckLocation = GeoPoint(foodtruck.latd!!, foodtruck.lgtd!!)
+//                            it.distanceToAsDouble(foodTruckLocation) < 10000.0
+//                        } ?: false
+//                        isRecent && isNear
+//                    }
+
+                _loaderUiState.value = ResultWrapper.Success("ok")
+
             }
             .addOnFailureListener { exception ->
                 Log.w("Firestore", "Error getting documents: ", exception)
@@ -65,9 +76,3 @@ class TrucksListViewModel @Inject constructor(
         Log.d("MainViewModel", "updateSelectedTruck ===> ${selectedTruckState.value}")
     }
 }
-
-data class TruckListState(
-    val isLoading: Boolean = false,
-    val trucks: List<Truck> = emptyList(),
-    val error: String = ""
-)

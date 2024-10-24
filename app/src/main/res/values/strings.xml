@@ -20,4 +20,6 @@
         <item>Autre</item>
     </string-array>
 
+    <string name="error_selected_category">Veuillez choisir une catégorie</string>
+
 </resources>

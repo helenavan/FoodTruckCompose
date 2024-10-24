@@ -88,9 +88,10 @@ fun InformationScreen(viewModel: InformationViewModel = hiltViewModel()) {
         Spacer(modifier = Modifier.height(16.dp))
 
         DropdownMenuWithFocus(
-            selectedCategory = selectedCategory.ifEmpty { categories[0] },
+            selectedCategory = selectedCategory,
             categories = categories,
-            onCategorySelected = viewModel::onCategorySelected
+            onCategorySelected = viewModel::onCategorySelected,
+            errorMessage = if (selectedCategory.isEmpty() && showError) stringResource(R.string.error_selected_category) else null
         )
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -216,7 +217,8 @@ fun getLatLngFromAddress(context: Context, mAddress: String): Address? {
 fun DropdownMenuWithFocus(
     selectedCategory: String,
     categories: List<String>,
-    onCategorySelected: (String) -> Unit
+    onCategorySelected: (String) -> Unit,
+    errorMessage: String? = null
 ) {
     var expanded by remember { mutableStateOf(false) }
 
@@ -253,7 +255,8 @@ fun DropdownMenuWithFocus(
             colors = OutlinedTextFieldDefaults.colors(
                 focusedBorderColor = colorResource(id = R.color.teal_700),
                 unfocusedBorderColor = colorResource(id = R.color.teal_700)
-            )
+            ),
+            isError = errorMessage != null,
         )
 
         ExposedDropdownMenu(
