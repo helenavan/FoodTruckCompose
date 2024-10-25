@@ -162,7 +162,7 @@ fun TruckItem(truck: Truck, onItemClick: (Truck) -> Unit) {
                 )
                 Text(
                     modifier = Modifier.padding(8.dp, 2.dp, 4.dp, 4.dp),
-                    text = "${truck.adresse}",
+                    text = "${truck.num ?: ""} ${truck.street ?: ""} ${truck.zipCode ?: ""} ${truck.city ?: ""}",
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis
                 )
@@ -197,23 +197,3 @@ fun TruckItemPreview() {
         onItemClick = {}
     )
 }
-
-//@Preview
-//@Composable
-//fun TruckListPreview() {
-//    TruckList(
-//        navController = NavController(LocalContext.current),
-//        trucks = listOf(
-//            Truck(),
-//            Truck(),
-//            Truck(),
-//            Truck(),
-//            Truck(),
-//            Truck(),
-//            Truck(),
-//            Truck(),
-//            Truck(),
-//            Truck()
-//        )
-//    )
-//}

@@ -38,7 +38,6 @@ fun MapView(
     truckId: String? = "null",
     viewModel: TrucksListViewModel = hiltViewModel()
 ) {
-   // val selectedTruck by viewModel.selectedTruckState
     val listOfTrucks by viewModel.dataListTrucksState.collectAsStateWithLifecycle()
     Configuration.getInstance().userAgentValue = BuildConfig.LIBRARY_PACKAGE_NAME
     val mapView = rememberMapViewWithLifecycle()
@@ -50,23 +49,14 @@ fun MapView(
 
     val mLocationOverlay = rememberUserLocationOverlay(mapView)
 
-    var startPoint: GeoPoint? = null
+    centerMapOnTruckLocation(truckId, mapView, viewModel)
 
     Box(modifier = Modifier.fillMaxSize()) {
 
         AndroidView(factory = { mapView }) { view ->
 
             addTruckMarkersToMap(mapView, listOfTrucks)
-            //TODO when user clicks on item of list, move camera to marker
-//            //center la carte sur l'utilisateur
-//            mLocationOverlay?.myLocation?.let { userLocation ->
-//                startPoint = GeoPoint(userLocation.latitude, userLocation.longitude)
-//                mapController?.animateTo(
-//                    GeoPoint(userLocation.latitude, userLocation.longitude),
-//                    15.5,
-//                    1
-//                )
-//            }
+
             view.invalidate() //rafraîchir la carte
 
         }
@@ -109,7 +99,7 @@ fun addTruckMarkersToMap(mapView: org.osmdroid.views.MapView, trucks: List<Truck
             truck.lgtd?.let { lng ->
                 val truckGeoPoint = GeoPoint(lat, lng)
                 val truckMarker = Marker(mapView).apply {
-                    icon = getMarkerIcon(mapView.context, truck.categorie ?: "Burger")
+                    icon = getDrawable(mapView.context, R.drawable.baseline_local_shipping_24)
                     position = truckGeoPoint
                     setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
                     title = truck.nameTruck
@@ -121,7 +111,7 @@ fun addTruckMarkersToMap(mapView: org.osmdroid.views.MapView, trucks: List<Truck
         }
     }
 }
-
+//TODO changer les marqueurs
 fun getMarkerIcon(context: Context, categorie: String): Drawable? {
     return when (categorie) {
         "Italien/Pizza" -> getDrawable(context, R.drawable.ic_marqueur_italien)
@@ -141,5 +131,21 @@ fun centerMapOnUserLocation(
     mLocationOverlay?.myLocation?.let { userLocation ->
         val geoPoint = GeoPoint(userLocation.latitude, userLocation.longitude)
         mapView.controller?.animateTo(geoPoint, 15.5, 1)
+    }
+}
+
+fun centerMapOnTruckLocation(
+    truckId: String?,
+    mapView: org.osmdroid.views.MapView,
+    viewModel: TrucksListViewModel
+) {
+    if (truckId != null) {
+        viewModel.getTruckById(truckId)?.let { selectedTruck ->
+            mapView.controller?.animateTo(
+                selectedTruck.let { GeoPoint(it?.latd!!, it.lgtd!!) },
+                15.5,
+                1
+            )
+        }
     }
 }

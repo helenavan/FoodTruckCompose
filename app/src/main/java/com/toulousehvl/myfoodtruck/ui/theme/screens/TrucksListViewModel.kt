@@ -1,7 +1,6 @@
 package com.toulousehvl.myfoodtruck.ui.theme.screens
 
 import android.util.Log
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -25,8 +24,7 @@ class TrucksListViewModel @Inject constructor(
     private val _dataListTrucksState = MutableStateFlow<List<Truck>>(emptyList())
     val dataListTrucksState: StateFlow<List<Truck>> = _dataListTrucksState
 
-    val selectedTruckState: MutableState<String?> =
-        mutableStateOf(savedStateHandle["selectedTruck"])
+    private var selectedTruckState = mutableStateOf<Truck?>(null)
 
     init {
         fetchDataFromFirestore()
@@ -38,41 +36,38 @@ class TrucksListViewModel @Inject constructor(
         val twoHoursAgo = currentDateTime.minusHours(2).toInstant().toEpochMilli()
 
         val db = FirebaseFirestore.getInstance()
+        val docRef = db.collection("foodtrucks")
 
-        db.collection("foodtrucks")
-            .get()
-            .addOnSuccessListener { result ->
-                val dataList = result.documents.mapNotNull { document ->
-                    document.toObject(Truck::class.java)?.copy(documentId = document.id)
+        docRef
+            .addSnapshotListener { snapshot, e ->
+                if (e != null) {
+                    Log.w("Firestore", "Listen failed.", e)
+                    _loaderUiState.value = ResultWrapper.Error(e)
+                    return@addSnapshotListener
                 }
-
-                //filter by date
-                _dataListTrucksState.value =
-                    dataList.filter { it.date != null && it.date!! >= twoHoursAgo }
-                //TODO filter by location
-//                _dataListTrucksState.value =
-//                    dataList.filter { foodtruck ->
-//                        val isRecent = foodtruck.date?.let { it >= twoHoursAgo } ?: false
-//                        val isNear = userLocationState?.let {
-//                            val foodTruckLocation = GeoPoint(foodtruck.latd!!, foodtruck.lgtd!!)
-//                            it.distanceToAsDouble(foodTruckLocation) < 10000.0
-//                        } ?: false
-//                        isRecent && isNear
-//                    }
-
+                if (snapshot != null && !snapshot.isEmpty) {
+                    val dataList = snapshot.documents.mapNotNull { document ->
+                        document.toObject(Truck::class.java)?.copy(documentId = document.id)
+                    }
+                    _dataListTrucksState.value =
+                        dataList.filter { it.date != null && it.date!! >= twoHoursAgo }
+                }
                 _loaderUiState.value = ResultWrapper.Success("ok")
 
             }
-            .addOnFailureListener { exception ->
-                Log.w("Firestore", "Error getting documents: ", exception)
-                _loaderUiState.value = ResultWrapper.Error(exception)
-            }
     }
 
-    //TODO
-    fun updateSelectedTruck(truck: Truck) {
-        selectedTruckState.value = truck.documentId
-        //  savedStateHandle["selectedTruck"] = truck
-        Log.d("MainViewModel", "updateSelectedTruck ===> ${selectedTruckState.value}")
+    fun getTruckById(id: String): Truck? {
+        Log.d("TrucksListViewModel", "getTruckById ===> $id")
+        val ref = FirebaseFirestore.getInstance().collection("foodtrucks").document(id)
+        ref.get().addOnSuccessListener { document ->
+
+            Log.d("TrucksListViewModel", "document ===> ${document}")
+            if (document != null && document.exists()) {
+                selectedTruckState.value = document.toObject(Truck::class.java)
+            }
+        }
+        Log.d("TrucksListViewModel", "selectedTruckState ===> ${selectedTruckState.value}")
+        return selectedTruckState.value
     }
 }
