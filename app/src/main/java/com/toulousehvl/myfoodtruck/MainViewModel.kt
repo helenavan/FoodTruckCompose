@@ -1,10 +1,9 @@
-package com.toulousehvl.myfoodtruck.data
+package com.toulousehvl.myfoodtruck
 
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.Network
 import androidx.lifecycle.ViewModel
-import com.toulousehvl.myfoodtruck.MainApplication
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -16,8 +15,8 @@ class MainViewModel @Inject constructor() : ViewModel() {
     private val _isInternetAvailable = MutableStateFlow(false)
     val isInternetAvailable: StateFlow<Boolean> = _isInternetAvailable
 
-    fun setInternetAvailability(isAvailable: Boolean) {
-        _isInternetAvailable.value = isAvailable
+    init {
+        monitorInternetConnection()
     }
 
     private fun monitorInternetConnection() {
