@@ -21,5 +21,7 @@
     </string-array>
 
     <string name="error_selected_category">Veuillez choisir une catégorie</string>
+    <string name="rechercher_un_foodtruck">Rechercher un foodtruck</string>
+    <string name="empty_truck">Aucun foodtruckt à afficher</string>
 
 </resources>

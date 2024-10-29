@@ -7,8 +7,10 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -27,6 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -42,6 +45,7 @@ import com.toulousehvl.myfoodtruck.data.model.CategoryTruck
 import com.toulousehvl.myfoodtruck.data.model.CategoryTruck.Companion.toCategoryTruckString
 import com.toulousehvl.myfoodtruck.data.model.Truck
 import com.toulousehvl.myfoodtruck.navigation.NavigationItem
+import com.toulousehvl.myfoodtruck.ui.theme.composables.SearchBar
 
 
 @ExperimentalMaterialApi
@@ -53,8 +57,7 @@ fun TrucksListScreen(
 ) {
     val trucks by viewModel.dataListTrucksState.collectAsStateWithLifecycle()
     val uiState by viewModel.loaderUiState.collectAsStateWithLifecycle()
-
-    Log.d("TrucksListScreen", "truckslistscreen ===> $trucks")
+    val searchText = viewModel.searchtext
 
     //animation
     val pullRefreshState = rememberPullRefreshState(
@@ -70,6 +73,13 @@ fun TrucksListScreen(
         when (uiState) {
             is ResultWrapper.Success -> {
                 Column(modifier = Modifier.fillMaxSize()) {
+                    Spacer(modifier = Modifier.height(16.dp))
+                    SearchBar(
+                        value = searchText,
+                        hint = stringResource(R.string.rechercher_un_foodtruck),
+                        onValueChange = viewModel::onSearchTextChange
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
                     TruckList(trucks = trucks,
                         onItemClick = { selectedTruck ->
                             navController.navigate(
@@ -105,9 +115,11 @@ fun TruckList(
     onItemClick: (Truck) -> Unit,
 ) {
     if (trucks.isNullOrEmpty()) {
-        Text(text = "Aucun foodtruckt à afficher", modifier = Modifier
+        Text(text = stringResource(R.string.empty_truck), modifier = Modifier
             .padding(16.dp)
-            .fillMaxSize())
+            .fillMaxSize(),
+            textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+            color = Color.Gray)
     }
 
     if (trucks.isNotEmpty()) {

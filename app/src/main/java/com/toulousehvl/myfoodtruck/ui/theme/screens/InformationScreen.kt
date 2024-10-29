@@ -68,7 +68,6 @@ fun InformationScreen(viewModel: InformationViewModel = hiltViewModel()) {
 
         val isLoading = viewModel.isLoading
         val context = LocalContext.current
-        val result = viewModel.result
 
         Text(
             text = stringResource(R.string.ajouter_un_foodtruck),
