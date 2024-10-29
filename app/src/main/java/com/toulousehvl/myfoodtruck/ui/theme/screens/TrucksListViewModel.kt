@@ -4,14 +4,20 @@ import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.google.firebase.firestore.FirebaseFirestore
 import com.toulousehvl.myfoodtruck.data.ResultWrapper
 import com.toulousehvl.myfoodtruck.data.model.Truck
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.stateIn
 import java.time.ZoneId
 import java.time.ZonedDateTime
 import javax.inject.Inject
@@ -30,6 +36,25 @@ class TrucksListViewModel @Inject constructor(
 
     var searchtext by mutableStateOf("")
         private set
+
+    val searchResults: StateFlow<List<Truck>> =
+        snapshotFlow { searchtext }
+            .debounce(1000)
+            .combine(_dataListTrucksState) { searchText, dataList ->
+                when {
+                    searchText.isEmpty() -> dataList
+                    else -> dataList.filter {
+                        (it.nameTruck?.contains(
+                            searchText,
+                            ignoreCase = true
+                        ) == true)
+                                || (it.city?.contains(searchText, ignoreCase = true) == true)
+                    }
+                }
+            }
+            .stateIn(
+                viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList()
+            )
 
     init {
         fetchDataFromFirestore()

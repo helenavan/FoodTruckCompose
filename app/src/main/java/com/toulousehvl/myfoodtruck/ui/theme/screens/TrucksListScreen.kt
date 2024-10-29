@@ -1,6 +1,5 @@
 package com.toulousehvl.myfoodtruck.ui.theme.screens
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -58,6 +57,7 @@ fun TrucksListScreen(
     val trucks by viewModel.dataListTrucksState.collectAsStateWithLifecycle()
     val uiState by viewModel.loaderUiState.collectAsStateWithLifecycle()
     val searchText = viewModel.searchtext
+    val searchResults by viewModel.searchResults.collectAsStateWithLifecycle()
 
     //animation
     val pullRefreshState = rememberPullRefreshState(
@@ -80,7 +80,8 @@ fun TrucksListScreen(
                         onValueChange = viewModel::onSearchTextChange
                     )
                     Spacer(modifier = Modifier.height(16.dp))
-                    TruckList(trucks = trucks,
+                    TruckList(
+                        trucks = if (searchText.isEmpty()) trucks else searchResults,
                         onItemClick = { selectedTruck ->
                             navController.navigate(
                                 NavigationItem.MapTruck.route
