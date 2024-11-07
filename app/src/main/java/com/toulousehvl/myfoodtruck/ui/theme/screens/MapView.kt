@@ -2,6 +2,7 @@ package com.toulousehvl.myfoodtruck.ui.theme.screens
 
 import android.content.Context
 import android.graphics.drawable.Drawable
+import android.util.Log
 import androidx.appcompat.content.res.AppCompatResources.getDrawable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -11,6 +12,7 @@ import androidx.compose.material.icons.filled.MyLocation
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -47,7 +49,12 @@ fun MapView(
     mapView.setTileSource(TileSourceFactory.MAPNIK)
     mapView.setMultiTouchControls(true)
 
-    val mLocationOverlay = rememberUserLocationOverlay(mapView)
+    val mLocationOverlay = rememberUserLocationOverlay(mapView, viewModel)
+
+    LaunchedEffect(key1 = truckId) {
+        mLocationOverlay.enableMyLocation()
+        mLocationOverlay.enableFollowLocation()
+    }
 
     centerMapOnTruckLocation(truckId, mapView, viewModel)
 
@@ -62,7 +69,13 @@ fun MapView(
         }
 
         FloatingActionButton(
-            onClick = { centerMapOnUserLocation(mLocationOverlay, mapView) },
+            onClick = {
+                centerMapOnUserLocation(
+                    mLocationOverlay,
+                    mapView,
+                    viewModel::setUserLocation
+                )
+            },
             containerColor = YellowBanane,
             modifier = Modifier
                 .align(Alignment.BottomEnd)
@@ -74,20 +87,26 @@ fun MapView(
 }
 
 @Composable
-fun rememberUserLocationOverlay(mapView: org.osmdroid.views.MapView): MyLocationNewOverlay {
+fun rememberUserLocationOverlay(
+    mapView: org.osmdroid.views.MapView,
+    viewModel: TrucksListViewModel
+    // onUserLocation: (GeoPoint) -> Unit
+): MyLocationNewOverlay {
     val context = LocalContext.current
     val locationProvider = GpsMyLocationProvider(context)
-    locationProvider.locationUpdateMinTime = 1000L
+    locationProvider.locationUpdateMinTime = 500L
     val mapController = mapView.controller
 
     return remember {
         MyLocationNewOverlay(locationProvider, mapView).apply {
-            enableMyLocation()
-            enableFollowLocation()
+            //enableMyLocation()
+            //enableFollowLocation()
             myLocation?.let {
                 val geoPoint = GeoPoint(it.latitude, it.longitude)
                 mapController?.animateTo(geoPoint, 15.5, 1)
+                viewModel.setUserLocation(geoPoint)
             }
+
             mapView.overlays.add(this)
         }
     }
@@ -126,11 +145,16 @@ fun getMarkerIcon(context: Context, categorie: String): Drawable? {
 
 fun centerMapOnUserLocation(
     mLocationOverlay: MyLocationNewOverlay?,
-    mapView: org.osmdroid.views.MapView
+    mapView: org.osmdroid.views.MapView,
+    onUserLocation: (GeoPoint) -> Unit
 ) {
     mLocationOverlay?.myLocation?.let { userLocation ->
         val geoPoint = GeoPoint(userLocation.latitude, userLocation.longitude)
         mapView.controller?.animateTo(geoPoint, 15.5, 1)
+
+        onUserLocation(geoPoint)
+
+        Log.d("MapView", "=== User location: ${geoPoint?.latitude}, ${geoPoint?.longitude}")
     }
 }
 

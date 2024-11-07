@@ -48,12 +48,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.toulousehvl.myfoodtruck.R
+import com.toulousehvl.myfoodtruck.ui.theme.composables.TopImage
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun InformationScreen(viewModel: InformationViewModel = hiltViewModel()) {
     Column(
-        modifier = Modifier.padding(16.dp),
+        modifier = Modifier,
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -69,9 +70,14 @@ fun InformationScreen(viewModel: InformationViewModel = hiltViewModel()) {
         val isLoading = viewModel.isLoading
         val context = LocalContext.current
 
+        TopImage()
+
+        Spacer(modifier = Modifier.height(24.dp))
+
         Text(
             text = stringResource(R.string.ajouter_un_foodtruck),
-            style = MaterialTheme.typography.headlineSmall
+            style = MaterialTheme.typography.headlineSmall,
+            modifier = Modifier.padding(start = 16.dp, end = 16.dp)
         )
         Spacer(modifier = Modifier.height(24.dp))
 
@@ -179,7 +185,9 @@ fun CustomTextField(
         },
         singleLine = singleLine,
         isError = errorMessage != null,
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(start = 16.dp, end = 16.dp),
         maxLines = maxLines ?: 1,
         colors = OutlinedTextFieldDefaults.colors(
             focusedBorderColor = colorResource(id = R.color.teal_700),
@@ -237,7 +245,9 @@ fun DropdownMenuWithFocus(
     ExposedDropdownMenuBox(
         expanded = expanded,
         onExpandedChange = { expanded = !expanded },
-        modifier = Modifier.focusRequester(focusRequester)
+        modifier = Modifier
+            .focusRequester(focusRequester)
+            .padding(start = 16.dp, end = 16.dp)
     ) {
         OutlinedTextField(
             value = selectedCategory,

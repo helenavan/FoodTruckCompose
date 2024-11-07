@@ -45,6 +45,7 @@ import com.toulousehvl.myfoodtruck.data.model.CategoryTruck.Companion.toCategory
 import com.toulousehvl.myfoodtruck.data.model.Truck
 import com.toulousehvl.myfoodtruck.navigation.NavigationItem
 import com.toulousehvl.myfoodtruck.ui.theme.composables.SearchBar
+import com.toulousehvl.myfoodtruck.ui.theme.composables.TopImage
 
 
 @ExperimentalMaterialApi
@@ -64,48 +65,51 @@ fun TrucksListScreen(
         refreshing = uiState is ResultWrapper.Loading,
         onRefresh = viewModel::fetchDataFromFirestore
     )
+    Column {
+        TopImage()
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .pullRefresh(pullRefreshState)
-    ) {
-        when (uiState) {
-            is ResultWrapper.Success -> {
-                Column(modifier = Modifier.fillMaxSize()) {
-                    Spacer(modifier = Modifier.height(16.dp))
-                    SearchBar(
-                        value = searchText,
-                        hint = stringResource(R.string.rechercher_un_foodtruck),
-                        onValueChange = viewModel::onSearchTextChange
-                    )
-                    Spacer(modifier = Modifier.height(16.dp))
-                    TruckList(
-                        trucks = if (searchText.isEmpty()) trucks else searchResults,
-                        onItemClick = { selectedTruck ->
-                            navController.navigate(
-                                NavigationItem.MapTruck.route
-                                    .replace("{documentId}", "${selectedTruck.documentId}")
-                            )
-                        }
-                    )
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .pullRefresh(pullRefreshState)
+        ) {
+            when (uiState) {
+                is ResultWrapper.Success -> {
+                    Column(modifier = Modifier.fillMaxSize()) {
+                        Spacer(modifier = Modifier.height(16.dp))
+                        SearchBar(
+                            value = searchText,
+                            hint = stringResource(R.string.rechercher_un_foodtruck),
+                            onValueChange = viewModel::onSearchTextChange
+                        )
+                        Spacer(modifier = Modifier.height(16.dp))
+                        TruckList(
+                            trucks = if (searchText.isEmpty()) trucks else searchResults,
+                            onItemClick = { selectedTruck ->
+                                navController.navigate(
+                                    NavigationItem.MapTruck.route
+                                        .replace("{documentId}", "${selectedTruck.documentId}")
+                                )
+                            }
+                        )
+                    }
                 }
+
+                is ResultWrapper.Error -> {
+                    Text(text = "Error fetching data")
+                }
+                //TODO size and center
+                is ResultWrapper.Loading -> {}
             }
 
-            is ResultWrapper.Error -> {
-                Text(text = "Error fetching data")
-            }
-            //TODO size and center
-            is ResultWrapper.Loading -> {}
+            PullRefreshIndicator(
+                refreshing = ResultWrapper.Loading(true) == uiState,
+                state = pullRefreshState,
+                modifier = Modifier.align(Alignment.TopCenter),
+                backgroundColor = colorResource(id = R.color.teal_700),
+                contentColor = Color.White
+            )
         }
-
-        PullRefreshIndicator(
-            refreshing = ResultWrapper.Loading(true) == uiState,
-            state = pullRefreshState,
-            modifier = Modifier.align(Alignment.TopCenter),
-            backgroundColor = colorResource(id = R.color.teal_700),
-            contentColor = Color.White
-        )
     }
 }
 

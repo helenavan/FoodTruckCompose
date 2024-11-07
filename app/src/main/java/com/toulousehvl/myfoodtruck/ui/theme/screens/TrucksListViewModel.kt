@@ -18,6 +18,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.stateIn
+import org.osmdroid.util.GeoPoint
 import java.time.ZoneId
 import java.time.ZonedDateTime
 import javax.inject.Inject
@@ -56,12 +57,20 @@ class TrucksListViewModel @Inject constructor(
                 viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList()
             )
 
+    private val _userTruckLocation = MutableStateFlow<GeoPoint?>(null)
+    val userTruckLocation: StateFlow<GeoPoint?> =_userTruckLocation
+
     init {
         fetchDataFromFirestore()
     }
 
     fun onSearchTextChange(newText: String) {
         searchtext = newText
+    }
+
+    fun setUserLocation(newLocation: GeoPoint) {
+        _userTruckLocation.value = newLocation
+        Log.d("TrucksListViewModel", "=== User location: $userTruckLocation new: $newLocation")
     }
 
     fun fetchDataFromFirestore() {
