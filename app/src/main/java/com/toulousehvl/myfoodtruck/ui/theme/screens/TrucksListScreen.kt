@@ -45,7 +45,6 @@ import com.toulousehvl.myfoodtruck.data.model.CategoryTruck.Companion.toCategory
 import com.toulousehvl.myfoodtruck.data.model.Truck
 import com.toulousehvl.myfoodtruck.navigation.NavigationItem
 import com.toulousehvl.myfoodtruck.ui.theme.composables.SearchBar
-import com.toulousehvl.myfoodtruck.ui.theme.composables.TopImage
 
 
 @ExperimentalMaterialApi
@@ -66,8 +65,7 @@ fun TrucksListScreen(
         onRefresh = viewModel::fetchDataFromFirestore
     )
     Column {
-        TopImage()
-
+        Spacer(modifier = Modifier.height(56.dp))
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -168,20 +166,23 @@ fun TruckItem(truck: Truck, onItemClick: (Truck) -> Unit) {
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                     fontSize = 16.sp,
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Bold,
+                    color = Color.Black
                 )
                 Text(
                     modifier = Modifier.padding(8.dp, 2.dp, 4.dp),
                     text = "${truck.categorie}",
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
-                    fontStyle = FontStyle.Italic
+                    fontStyle = FontStyle.Italic,
+                    color = Color.Black
                 )
                 Text(
                     modifier = Modifier.padding(8.dp, 2.dp, 4.dp, 4.dp),
                     text = "${truck.num ?: ""} ${truck.street ?: ""} ${truck.zipCode ?: ""} ${truck.city ?: ""}",
                     maxLines = 2,
-                    overflow = TextOverflow.Ellipsis
+                    overflow = TextOverflow.Ellipsis,
+                    color = Color.Black
                 )
             }
 

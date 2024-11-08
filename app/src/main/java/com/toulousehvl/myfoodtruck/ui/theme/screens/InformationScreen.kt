@@ -70,9 +70,7 @@ fun InformationScreen(viewModel: InformationViewModel = hiltViewModel()) {
         val isLoading = viewModel.isLoading
         val context = LocalContext.current
 
-        TopImage()
-
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(60.dp))
 
         Text(
             text = stringResource(R.string.ajouter_un_foodtruck),

@@ -10,12 +10,12 @@ plugins {
 
 android {
     namespace = "com.toulousehvl.myfoodtruck"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.toulousehvl.myfoodtruck"
         minSdk = 28
-        targetSdk = 34
+        targetSdk = 35
         versionCode = 2
         versionName = "2.0"
 
