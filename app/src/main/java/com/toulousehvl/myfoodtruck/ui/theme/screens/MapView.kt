@@ -2,7 +2,6 @@ package com.toulousehvl.myfoodtruck.ui.theme.screens
 
 import android.content.Context
 import android.graphics.drawable.Drawable
-import android.util.Log
 import androidx.appcompat.content.res.AppCompatResources.getDrawable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -14,23 +13,30 @@ import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.toulousehvl.myfoodtruck.R
 import com.toulousehvl.myfoodtruck.data.model.Truck
+import com.toulousehvl.myfoodtruck.data.utils.MapsUtils.Companion.getAddressFromGeoPoint
+import com.toulousehvl.myfoodtruck.ui.theme.composables.InputDialog
 import com.toulousehvl.myfoodtruck.ui.theme.composables.rememberMapViewWithLifecycle
 import com.toulousehvl.myfoodtruck.ui.theme.theme.YellowBanane
 import org.osmdroid.config.Configuration
+import org.osmdroid.events.MapEventsReceiver
 import org.osmdroid.library.BuildConfig
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.GeoPoint
+import org.osmdroid.views.overlay.MapEventsOverlay
 import org.osmdroid.views.overlay.Marker
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay
@@ -40,12 +46,23 @@ fun MapView(
     truckId: String? = "null",
     viewModel: TrucksListViewModel = hiltViewModel()
 ) {
-    val listOfTrucks by viewModel.dataListTrucksState.collectAsStateWithLifecycle()
     Configuration.getInstance().userAgentValue = BuildConfig.LIBRARY_PACKAGE_NAME
+
+    val listOfTrucks by viewModel.dataListTrucksState.collectAsStateWithLifecycle()
+
     val mapView = rememberMapViewWithLifecycle()
     val mapController = mapView.controller
 
-    mapController.setZoom(15.0)
+    var selectedLocation by remember { mutableStateOf<GeoPoint?>(null) }
+    var showDialog by remember { mutableStateOf(false) }
+    val foodTruckName = viewModel.foodTruckName
+    val foodTruckAddress = viewModel.foodTruckAddress
+    val foodTruckCategory = viewModel.selectedCategory
+    val showErrorField = viewModel.showError
+
+    val context = LocalContext.current
+
+    mapController.setZoom(16.0)
     mapView.setTileSource(TileSourceFactory.MAPNIK)
     mapView.setMultiTouchControls(true)
 
@@ -68,6 +85,47 @@ fun MapView(
 
         }
 
+        if (showDialog && selectedLocation != null) {
+            getAddressFromGeoPoint(LocalContext.current, GeoPoint(selectedLocation))?.let {
+
+                    addressFT ->
+                viewModel.onFoodTruckAddressChange(addressFT)
+
+                InputDialog(
+                    dialogTitle = stringResource(R.string.ajouter_un_food_truck),
+                    address = foodTruckAddress,
+                    nameTruck = foodTruckName,
+                    category = foodTruckCategory,
+                    onTextAddressChange = viewModel::onFoodTruckAddressChange,
+                    onCategorySelected = viewModel::onCategorySelected,
+                    onTextNameChange = { newValue -> viewModel.onFoodTruckNameChange(newValue) },
+                    onConfirm = {
+                        viewModel.addFoodTruckToFirestore(context)
+                        showDialog = viewModel.showError
+                    },
+                    onDismiss = { showDialog = false },
+                    show = showDialog,
+                    categories = LocalContext.current.resources.getStringArray(R.array.food_categories)
+                        .toList(),
+                    showError = showErrorField
+                )
+            }
+        }
+
+        val selectTruckOverlay = MapEventsOverlay(object : MapEventsReceiver {
+            override fun singleTapConfirmedHelper(p: GeoPoint?): Boolean {
+                return false
+            }
+
+            override fun longPressHelper(p: GeoPoint?): Boolean {
+                selectedLocation = p
+                showDialog = true
+                return true
+            }
+
+        })
+        mapView.overlays.add(selectTruckOverlay)
+
         FloatingActionButton(
             onClick = {
                 centerMapOnUserLocation(
@@ -86,6 +144,7 @@ fun MapView(
     }
 }
 
+//TODO around user location
 @Composable
 fun rememberUserLocationOverlay(
     mapView: org.osmdroid.views.MapView,
@@ -118,28 +177,60 @@ fun addTruckMarkersToMap(mapView: org.osmdroid.views.MapView, trucks: List<Truck
             truck.lgtd?.let { lng ->
                 val truckGeoPoint = GeoPoint(lat, lng)
                 val truckMarker = Marker(mapView).apply {
-                    icon = getDrawable(mapView.context, R.drawable.baseline_local_shipping_24)
                     position = truckGeoPoint
                     setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
                     title = truck.nameTruck
                     snippet = truck.categorie
                     subDescription = truck.adresse
+                    icon = truck.categorie?.let { setMarkerColor(mapView.context, it) }
                 }
                 mapView.overlays.add(truckMarker)
             }
         }
     }
 }
-//TODO changer les marqueurs
-fun getMarkerIcon(context: Context, categorie: String): Drawable? {
+
+fun setMarkerColor(context: Context, categorie: String): Drawable? {
     return when (categorie) {
-        "Italien/Pizza" -> getDrawable(context, R.drawable.ic_marqueur_italien)
-        "Asiatique" -> getDrawable(context, R.drawable.ic_marqueur_asia)
-        "Africain" -> getDrawable(context, R.drawable.ic_marqueur_africain)
-        "Kebab" -> getDrawable(context, R.drawable.ic_marqueur_kebab)
-        "Japonais" -> getDrawable(context, R.drawable.ic_marqueur_japonais)
-        "Burger" -> getDrawable(context, R.drawable.ic_marqueur_burger)
-        else -> getDrawable(context, R.drawable.ic_marqueur_burger)
+        "Italien/Pizza" -> getDrawable(context, R.drawable.ic_truck).apply {
+            this?.setTint(setColorToTruck(context, categorie))
+        }
+
+        "Asiatique" -> getDrawable(context, R.drawable.ic_truck).apply {
+            this?.setTint(setColorToTruck(context, categorie))
+        }
+
+        "Africain" -> getDrawable(context, R.drawable.ic_truck).apply {
+            this?.setTint(setColorToTruck(context, categorie))
+        }
+
+        "Kebab" -> getDrawable(context, R.drawable.ic_truck).apply {
+            this?.setTint(setColorToTruck(context, categorie))
+        }
+
+        "Japonais" -> getDrawable(context, R.drawable.ic_truck).apply {
+            this?.setTint(setColorToTruck(context, categorie))
+        }
+
+        "Burger" -> getDrawable(context, R.drawable.ic_truck).apply {
+            this?.setTint(setColorToTruck(context, categorie))
+        }
+
+        else -> getDrawable(context, R.drawable.ic_truck).apply {
+            this?.setTint(setColorToTruck(context, categorie))
+        }
+    }
+}
+
+fun setColorToTruck(context: Context, categorie: String): Int {
+    return when (categorie) {
+        "Italien/Pizza" -> context.resources.getColor(R.color.pink_dark)
+        "Asiatique" -> context.resources.getColor(R.color.purple_200)
+        "Africain" -> context.resources.getColor(R.color.teal_200)
+        "Kebab" -> context.resources.getColor(R.color.yellow)
+        "Japonais" -> context.resources.getColor(R.color.lite_red)
+        "Burger" -> context.resources.getColor(R.color.pink)
+        else -> context.resources.getColor(R.color.pink)
     }
 }
 
@@ -153,8 +244,6 @@ fun centerMapOnUserLocation(
         mapView.controller?.animateTo(geoPoint, 15.5, 1)
 
         onUserLocation(geoPoint)
-
-        Log.d("MapView", "=== User location: ${geoPoint?.latitude}, ${geoPoint?.longitude}")
     }
 }
 

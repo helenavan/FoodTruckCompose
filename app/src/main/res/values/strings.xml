@@ -23,5 +23,8 @@
     <string name="error_selected_category">Veuillez choisir une catégorie</string>
     <string name="rechercher_un_foodtruck">Rechercher un foodtruck</string>
     <string name="empty_truck">Aucun foodtruckt à afficher</string>
+    <string name="valider">Valider</string>
+    <string name="annuler">Annuler</string>
+    <string name="ajouter_un_food_truck">Ajouter un food truck</string>
 
 </resources>

@@ -29,9 +29,6 @@ class InformationViewModel @Inject constructor() : ViewModel() {
     var isLoading by mutableStateOf(false)
         private set
 
-    var result by mutableStateOf<Address?>(null)
-        private set
-
     var showError by mutableStateOf(false)
         private set
 
@@ -47,6 +44,13 @@ class InformationViewModel @Inject constructor() : ViewModel() {
         selectedCategory = newCategory
     }
 
+    fun clearFields() {
+        truckName = ""
+        truckAddress = ""
+        selectedCategory = ""
+        showError = false
+    }
+
     fun addFoodTruckToFirestore(context: Context) {
 
         if (truckName.isEmpty() || truckAddress.isEmpty() || selectedCategory.isEmpty()) {
@@ -57,7 +61,7 @@ class InformationViewModel @Inject constructor() : ViewModel() {
         showError = false
 
         viewModelScope.launch {
-            result = getLatLngFromAddress(context, truckAddress)
+           val result = getLatLngFromAddress(context, truckAddress)
             result?.let {
                 addDataToFirestore(
                     Truck(
@@ -84,11 +88,7 @@ class InformationViewModel @Inject constructor() : ViewModel() {
         db.collection("foodtrucks")
             .add(truck)
             .addOnSuccessListener {
-                //TODO update the list of foodtrucks ?
-                // fetchDataFromFirestore()
-                truckName = ""
-                truckAddress = ""
-                selectedCategory = ""
+                clearFields()
                 isLoading = false
             }
             .addOnFailureListener { e ->

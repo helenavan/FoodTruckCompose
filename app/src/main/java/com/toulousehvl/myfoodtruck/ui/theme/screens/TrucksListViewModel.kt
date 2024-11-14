@@ -1,5 +1,6 @@
 package com.toulousehvl.myfoodtruck.ui.theme.screens
 
+import android.content.Context
 import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -18,6 +19,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import org.osmdroid.util.GeoPoint
 import java.time.ZoneId
 import java.time.ZonedDateTime
@@ -34,6 +36,33 @@ class TrucksListViewModel @Inject constructor(
     val dataListTrucksState: StateFlow<List<Truck>> = _dataListTrucksState
 
     private var selectedTruckState = mutableStateOf<Truck?>(null)
+
+    var selectedCategory by mutableStateOf("")
+        private set
+
+    var foodTruckName by mutableStateOf("")
+        private set
+
+    var foodTruckAddress by mutableStateOf("")
+        private set
+
+    var showError by mutableStateOf(false)
+        private set
+
+    var isLoading by mutableStateOf(false)
+        private set
+
+    fun onCategorySelected(newCategory: String) {
+        selectedCategory = newCategory
+    }
+
+    fun onFoodTruckAddressChange(newAddress: String) {
+        foodTruckAddress = newAddress
+    }
+
+    fun onFoodTruckNameChange(newName: String) {
+        foodTruckName = newName
+    }
 
     var searchtext by mutableStateOf("")
         private set
@@ -108,5 +137,56 @@ class TrucksListViewModel @Inject constructor(
             }
         }
         return selectedTruckState.value
+    }
+
+    fun addFoodTruckToFirestore(context: Context) {
+
+        if (foodTruckName.isEmpty() || foodTruckName.isEmpty() || selectedCategory.isEmpty()) {
+            showError = true
+            return
+        }
+
+        showError = false
+
+        viewModelScope.launch {
+           val result = getLatLngFromAddress(context, foodTruckAddress)
+            result?.let {
+                addDataToFirestore(
+                    Truck(
+                        nameTruck = foodTruckName,
+                        categorie = selectedCategory,
+                        latd = it.latitude,
+                        lgtd = it.longitude,
+                        date = System.currentTimeMillis(),
+                        street = it.thoroughfare,
+                        zipCode = it.postalCode,
+                        city = it.locality,
+                        country = it.countryName,
+                        adresse = foodTruckAddress,
+                        num = it.subThoroughfare
+                    )
+                )
+            }
+        }
+    }
+
+    private fun addDataToFirestore(truck: Truck) {
+
+        Log.d("TrucksListVM", "category ===> $selectedCategory")
+
+        isLoading = true
+        val db = FirebaseFirestore.getInstance()
+        db.collection("foodtrucks")
+            .add(truck)
+            .addOnSuccessListener {
+                foodTruckName = ""
+                foodTruckAddress = ""
+                selectedCategory = ""
+                isLoading = false
+            }
+            .addOnFailureListener { e ->
+                Log.w("Firestore", "Error adding document", e)
+                isLoading = false
+            }
     }
 }
