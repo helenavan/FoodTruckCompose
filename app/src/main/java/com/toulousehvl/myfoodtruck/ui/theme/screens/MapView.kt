@@ -62,7 +62,8 @@ fun MapView(
 
     val context = LocalContext.current
 
-    mapController.setZoom(16.0)
+    mapController.zoomTo(16.0)
+    mapView.zoomController.setVisibility(org.osmdroid.views.CustomZoomButtonsController.Visibility.NEVER)
     mapView.setTileSource(TileSourceFactory.MAPNIK)
     mapView.setMultiTouchControls(true)
 
