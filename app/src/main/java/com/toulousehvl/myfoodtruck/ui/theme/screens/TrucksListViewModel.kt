@@ -6,7 +6,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.firestore.FirebaseFirestore
@@ -26,9 +25,8 @@ import java.time.ZonedDateTime
 import javax.inject.Inject
 
 @HiltViewModel
-class TrucksListViewModel @Inject constructor(
-    private val savedStateHandle: SavedStateHandle
-) : ViewModel() {
+class TrucksListViewModel @Inject constructor() : ViewModel() {
+
     private val _loaderUiState = MutableStateFlow<ResultWrapper<Truck>>(ResultWrapper.Loading(true))
     val loaderUiState: StateFlow<ResultWrapper<Truck>> = _loaderUiState
 
@@ -51,6 +49,9 @@ class TrucksListViewModel @Inject constructor(
 
     var isLoading by mutableStateOf(false)
         private set
+    //TODO ===
+    var userLocation by mutableStateOf<GeoPoint?>(null)
+        private set
 
     fun onCategorySelected(newCategory: String) {
         selectedCategory = newCategory
@@ -66,6 +67,11 @@ class TrucksListViewModel @Inject constructor(
 
     fun onShowError(newError: Boolean) {
         showError = newError
+    }
+
+    //TODO
+    fun onUserLocationChange(newLocation: GeoPoint) {
+        userLocation = newLocation
     }
 
     var searchtext by mutableStateOf("")
@@ -90,9 +96,6 @@ class TrucksListViewModel @Inject constructor(
                 viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList()
             )
 
-    private val _userTruckLocation = MutableStateFlow<GeoPoint?>(null)
-    val userTruckLocation: StateFlow<GeoPoint?> =_userTruckLocation
-
     init {
         fetchDataFromFirestore()
     }
@@ -101,12 +104,10 @@ class TrucksListViewModel @Inject constructor(
         searchtext = newText
     }
 
-    fun setUserLocation(newLocation: GeoPoint) {
-        _userTruckLocation.value = newLocation
-        Log.d("TrucksListViewModel", "=== User location: $userTruckLocation new: $newLocation")
-    }
-
     fun fetchDataFromFirestore() {
+
+        Log.d("TrucksListViewModel","=== $userLocation")
+
         val currentDateTime =
             ZonedDateTime.now(ZoneId.systemDefault())  // Utilise la zone horaire locale
         val twoHoursAgo = currentDateTime.minusHours(2).toInstant().toEpochMilli()
