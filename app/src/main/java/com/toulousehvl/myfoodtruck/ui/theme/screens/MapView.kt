@@ -107,7 +107,8 @@ fun MapView(
                     show = showDialog,
                     categories = LocalContext.current.resources.getStringArray(R.array.food_categories)
                         .toList(),
-                    showError = showErrorField
+                    showError = showErrorField,
+                    onShowErrorChange = { viewModel.onShowError(it) }
                 )
             }
         }
@@ -226,8 +227,8 @@ fun setColorToTruck(context: Context, categorie: String): Int {
     return when (categorie) {
         "Italien/Pizza" -> context.resources.getColor(R.color.pink_dark)
         "Asiatique" -> context.resources.getColor(R.color.purple_200)
-        "Africain" -> context.resources.getColor(R.color.teal_200)
-        "Kebab" -> context.resources.getColor(R.color.yellow)
+        "Africain" -> context.resources.getColor(R.color.purple_500)
+        "Kebab" -> context.resources.getColor(R.color.orange)
         "Japonais" -> context.resources.getColor(R.color.lite_red)
         "Burger" -> context.resources.getColor(R.color.pink)
         else -> context.resources.getColor(R.color.pink)

@@ -211,10 +211,8 @@ fun MainScreenPreview() {
         TopAppBar(
             colors = TopAppBarDefaults.topAppBarColors(
                 containerColor = Color.Transparent,
-                // titleContentColor = colorResource(id = R.color.teal_700)
             ),
             title = {
-                //TODO
                 DisplayLogo()
             },
             modifier = Modifier.shadow(

@@ -23,12 +23,13 @@ fun InputDialog(
     category: String,
     onTextAddressChange: (String) -> Unit,
     onTextNameChange: (String) -> Unit,
+    onCategorySelected: (String) -> Unit,
     onConfirm: () -> Unit,
     onDismiss: () -> Unit,
     show: Boolean,
     categories: List<String>,
-    onCategorySelected: (String) -> Unit,
-    showError: Boolean
+    showError: Boolean,
+    onShowErrorChange: (Boolean) -> Unit
 ) {
     AlertDialog(
         onDismissRequest = { !show },
@@ -55,6 +56,10 @@ fun InputDialog(
             TextButton(
                 onClick = {
                     onDismiss()
+                    onTextAddressChange("")
+                    onTextNameChange("")
+                    onCategorySelected("")
+                    onShowErrorChange(false)
                 }
             ) {
                 Text(stringResource(R.string.annuler))
@@ -77,7 +82,7 @@ fun InputDialog(
                     value = nameTruck,
                     onValueChange = onTextNameChange,
                     label = stringResource(id = R.string.nom_max_caract_res, 30),
-                    errorMessage = if (nameTruck.isEmpty() && showError) stringResource(R.string.veuillez_entrer_un_nom) else null,
+                    errorMessage = if (showError) stringResource(R.string.veuillez_entrer_un_nom) else null,
                     maxLength = 30,
                     singleLine = true
                 )
@@ -85,7 +90,7 @@ fun InputDialog(
                     selectedCategory = category,
                     categories = categories,
                     onCategorySelected = onCategorySelected,
-                    errorMessage = stringResource(R.string.error_selected_category)
+                    errorMessage = if (showError) stringResource(R.string.error_selected_category) else null
                 )
             }
         }

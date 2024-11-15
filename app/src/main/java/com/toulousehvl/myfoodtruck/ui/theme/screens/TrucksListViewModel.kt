@@ -64,6 +64,10 @@ class TrucksListViewModel @Inject constructor(
         foodTruckName = newName
     }
 
+    fun onShowError(newError: Boolean) {
+        showError = newError
+    }
+
     var searchtext by mutableStateOf("")
         private set
 
