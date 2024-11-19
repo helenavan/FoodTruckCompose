@@ -3,7 +3,6 @@ package com.toulousehvl.myfoodtruck.ui.theme.screens
 import android.content.Context
 import android.graphics.drawable.Drawable
 import android.location.Location
-import android.util.Log
 import androidx.appcompat.content.res.AppCompatResources.getDrawable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -51,6 +50,8 @@ fun MapView(
 ) {
     Configuration.getInstance().userAgentValue = BuildConfig.LIBRARY_PACKAGE_NAME
 
+    val context = LocalContext.current
+
     val listOfTrucks by viewModel.dataListTrucksState.collectAsStateWithLifecycle()
 
     val mapView = rememberMapViewWithLifecycle()
@@ -58,14 +59,10 @@ fun MapView(
 
     var selectedLocation by remember { mutableStateOf<GeoPoint?>(null) }
     var showDialog by remember { mutableStateOf(false) }
-    //TODO verify if updated location is correct
-    var userLocation by remember { mutableStateOf<GeoPoint?>(null) }
     val foodTruckName = viewModel.foodTruckName
     val foodTruckAddress = viewModel.foodTruckAddress
     val foodTruckCategory = viewModel.selectedCategory
     val showErrorField = viewModel.showError
-
-    val context = LocalContext.current
 
     mapController.zoomTo(16.0)
     mapView.zoomController.setVisibility(org.osmdroid.views.CustomZoomButtonsController.Visibility.NEVER)
@@ -85,7 +82,7 @@ fun MapView(
 
         AndroidView(factory = { mapView }) { view ->
 
-            addTruckMarkersToMap(mapView, listOfTrucks)
+        addTruckMarkersToMap(mapView, listOfTrucks)
 
             view.invalidate() //rafraîchir la carte
 
@@ -165,8 +162,6 @@ fun rememberUserLocationOverlay(
             override fun onLocationChanged(location: Location?, source: IMyLocationProvider?) {
                 super.onLocationChanged(location, source)
                 location?.let {
-                    Log.d("MyCurrentSpeed === ", it.speed.toString())
-                    Log.d("MapView", "=== User location 0 : $location")
                     viewModel.onUserLocationChange(GeoPoint(it.latitude, it.longitude))
                 }
             }
@@ -236,7 +231,7 @@ fun setColorToTruck(context: Context, categorie: String): Int {
         "Africain" -> context.resources.getColor(R.color.purple_500)
         "Kebab" -> context.resources.getColor(R.color.orange)
         "Japonais" -> context.resources.getColor(R.color.lite_red)
-        "Burger" -> context.resources.getColor(R.color.pink)
+        "Burger" -> context.resources.getColor(R.color.red_dark)
         else -> context.resources.getColor(R.color.pink)
     }
 }

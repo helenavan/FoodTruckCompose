@@ -1,5 +1,6 @@
 package com.toulousehvl.myfoodtruck.ui.theme.screens
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -96,8 +97,10 @@ fun TrucksListScreen(
                 is ResultWrapper.Error -> {
                     Text(text = "Error fetching data")
                 }
-                //TODO size and center
-                is ResultWrapper.Loading -> {}
+
+                is ResultWrapper.Loading -> {
+                    Log.d("TrucksListScreen", "=== Loading")
+                }
             }
 
             PullRefreshIndicator(
