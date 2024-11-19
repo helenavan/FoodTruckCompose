@@ -1,5 +1,6 @@
 package com.toulousehvl.myfoodtruck.ui.theme.screens
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -40,9 +41,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import com.toulousehvl.myfoodtruck.R
 import com.toulousehvl.myfoodtruck.data.ResultWrapper
-import com.toulousehvl.myfoodtruck.data.model.CategoryTruck
-import com.toulousehvl.myfoodtruck.data.model.CategoryTruck.Companion.toCategoryTruckString
 import com.toulousehvl.myfoodtruck.data.model.Truck
+import com.toulousehvl.myfoodtruck.data.utils.CategoriesUtils.Companion.setTruckCategory
 import com.toulousehvl.myfoodtruck.navigation.NavigationItem
 import com.toulousehvl.myfoodtruck.ui.theme.composables.SearchBar
 
@@ -96,8 +96,10 @@ fun TrucksListScreen(
                 is ResultWrapper.Error -> {
                     Text(text = "Error fetching data")
                 }
-                //TODO size and center
-                is ResultWrapper.Loading -> {}
+
+                is ResultWrapper.Loading -> {
+                    Log.d("TrucksListScreen", "=== Loading")
+                }
             }
 
             PullRefreshIndicator(
@@ -155,7 +157,7 @@ fun TruckItem(truck: Truck, onItemClick: (Truck) -> Unit) {
         ) {
             Image(
                 modifier = Modifier.padding(4.dp, 2.dp, 2.dp, 4.dp),
-                painter = painterResource(id = setTruckCategorie(truck.categorie.toString())),
+                painter = painterResource(id = setTruckCategory(truck.categorie.toString())),
                 contentDescription = "frites"
             )
 
@@ -187,18 +189,6 @@ fun TruckItem(truck: Truck, onItemClick: (Truck) -> Unit) {
             }
 
         }
-    }
-}
-
-private fun setTruckCategorie(category: String): Int {
-    return when (category) {
-        CategoryTruck.Italian.toCategoryTruckString() -> R.drawable.ic_pizza
-        CategoryTruck.Burger.toCategoryTruckString() -> R.drawable.ic_burger
-        CategoryTruck.Asian.toCategoryTruckString() -> R.drawable.ic_thai
-        CategoryTruck.Japanese.toCategoryTruckString() -> R.drawable.ic_sushi
-        CategoryTruck.African.toCategoryTruckString() -> R.drawable.ic_africain
-        CategoryTruck.Kebab.toCategoryTruckString() -> R.drawable.ic_kebab
-        else -> R.drawable.ic_vegetarien
     }
 }
 

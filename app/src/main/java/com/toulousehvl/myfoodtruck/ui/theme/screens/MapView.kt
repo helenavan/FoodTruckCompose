@@ -2,6 +2,7 @@ package com.toulousehvl.myfoodtruck.ui.theme.screens
 
 import android.content.Context
 import android.graphics.drawable.Drawable
+import android.location.Location
 import androidx.appcompat.content.res.AppCompatResources.getDrawable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -39,6 +40,7 @@ import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.overlay.MapEventsOverlay
 import org.osmdroid.views.overlay.Marker
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider
+import org.osmdroid.views.overlay.mylocation.IMyLocationProvider
 import org.osmdroid.views.overlay.mylocation.MyLocationNewOverlay
 
 @Composable
@@ -47,6 +49,8 @@ fun MapView(
     viewModel: TrucksListViewModel = hiltViewModel()
 ) {
     Configuration.getInstance().userAgentValue = BuildConfig.LIBRARY_PACKAGE_NAME
+
+    val context = LocalContext.current
 
     val listOfTrucks by viewModel.dataListTrucksState.collectAsStateWithLifecycle()
 
@@ -59,8 +63,6 @@ fun MapView(
     val foodTruckAddress = viewModel.foodTruckAddress
     val foodTruckCategory = viewModel.selectedCategory
     val showErrorField = viewModel.showError
-
-    val context = LocalContext.current
 
     mapController.zoomTo(16.0)
     mapView.zoomController.setVisibility(org.osmdroid.views.CustomZoomButtonsController.Visibility.NEVER)
@@ -80,7 +82,7 @@ fun MapView(
 
         AndroidView(factory = { mapView }) { view ->
 
-            addTruckMarkersToMap(mapView, listOfTrucks)
+        addTruckMarkersToMap(mapView, listOfTrucks)
 
             view.invalidate() //rafraîchir la carte
 
@@ -133,7 +135,7 @@ fun MapView(
                 centerMapOnUserLocation(
                     mLocationOverlay,
                     mapView,
-                    viewModel::setUserLocation
+                    viewModel::onUserLocationChange
                 )
             },
             containerColor = YellowBanane,
@@ -151,26 +153,24 @@ fun MapView(
 fun rememberUserLocationOverlay(
     mapView: org.osmdroid.views.MapView,
     viewModel: TrucksListViewModel
-    // onUserLocation: (GeoPoint) -> Unit
 ): MyLocationNewOverlay {
     val context = LocalContext.current
     val locationProvider = GpsMyLocationProvider(context)
-    locationProvider.locationUpdateMinTime = 500L
-    val mapController = mapView.controller
-
-    return remember {
-        MyLocationNewOverlay(locationProvider, mapView).apply {
-            //enableMyLocation()
-            //enableFollowLocation()
-            myLocation?.let {
-                val geoPoint = GeoPoint(it.latitude, it.longitude)
-                mapController?.animateTo(geoPoint, 15.5, 1)
-                viewModel.setUserLocation(geoPoint)
+    locationProvider.locationUpdateMinTime = 100L
+    val locationOverlay =
+        object : MyLocationNewOverlay(GpsMyLocationProvider(context), mapView) {
+            override fun onLocationChanged(location: Location?, source: IMyLocationProvider?) {
+                super.onLocationChanged(location, source)
+                location?.let {
+                    viewModel.onUserLocationChange(GeoPoint(it.latitude, it.longitude))
+                }
             }
-
-            mapView.overlays.add(this)
         }
-    }
+    locationOverlay.enableMyLocation()
+    mapView.overlays.add(locationOverlay)
+
+    return locationOverlay
+
 }
 
 fun addTruckMarkersToMap(mapView: org.osmdroid.views.MapView, trucks: List<Truck>) {
@@ -231,7 +231,7 @@ fun setColorToTruck(context: Context, categorie: String): Int {
         "Africain" -> context.resources.getColor(R.color.purple_500)
         "Kebab" -> context.resources.getColor(R.color.orange)
         "Japonais" -> context.resources.getColor(R.color.lite_red)
-        "Burger" -> context.resources.getColor(R.color.pink)
+        "Burger" -> context.resources.getColor(R.color.red_dark)
         else -> context.resources.getColor(R.color.pink)
     }
 }
@@ -257,8 +257,8 @@ fun centerMapOnTruckLocation(
     if (truckId != null) {
         viewModel.getTruckById(truckId)?.let { selectedTruck ->
             mapView.controller?.animateTo(
-                selectedTruck.let { GeoPoint(it?.latd!!, it.lgtd!!) },
-                15.5,
+                selectedTruck.let { GeoPoint(it.latd!!, it.lgtd!!) },
+                16.0,
                 1
             )
         }
