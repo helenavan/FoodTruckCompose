@@ -26,5 +26,7 @@
     <string name="valider">Valider</string>
     <string name="annuler">Annuler</string>
     <string name="ajouter_un_food_truck">Ajouter un food truck</string>
+    <string name="adresse_invalide">Adresse invalide. Veuillez recommencer.</string>
+    <string name="foodtruck_ajouté">FoodTruck ajouté !</string>
 
 </resources>

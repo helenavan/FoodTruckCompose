@@ -1,9 +1,7 @@
 package com.toulousehvl.myfoodtruck.ui.theme.screens
 
-import android.content.Context
-import android.location.Address
-import android.location.Geocoder
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,6 +19,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -42,22 +41,32 @@ fun InformationScreen(viewModel: InformationViewModel = hiltViewModel()) {
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        val context = LocalContext.current
         val truckName = viewModel.truckName
         val truckAddress = viewModel.truckAddress
         val categories =
-            LocalContext.current.resources.getStringArray(R.array.food_categories).toList()
+            context.resources.getStringArray(R.array.food_categories).toList()
         val selectedCategory = viewModel.selectedCategory
         val showError = viewModel.showError
         val maxLength = 30
         val maxLengthAddress = 100
 
         val isLoading = viewModel.isLoading
-        val context = LocalContext.current
 
         //clear fields when the screen is disposed
         DisposableEffect(Unit) {
             onDispose {
                 viewModel.clearFields()
+            }
+        }
+        //collect error message and update the UI
+        LaunchedEffect(Unit) {
+            viewModel.showErrorMessage.collect { errorMessage ->
+                if (errorMessage) {
+                    Toast.makeText(context, R.string.adresse_invalide, Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(context, R.string.foodtruck_ajouté, Toast.LENGTH_SHORT).show()
+                }
             }
         }
 
@@ -74,7 +83,7 @@ fun InformationScreen(viewModel: InformationViewModel = hiltViewModel()) {
             value = truckName,
             onValueChange = viewModel::onTruckNameChange,
             label = stringResource(id = R.string.nom_max_caract_res, maxLength),
-            errorMessage = if (showError) stringResource(R.string.veuillez_entrer_un_nom) else null,
+            errorMessage = if (truckName.isEmpty() && showError) stringResource(R.string.veuillez_entrer_un_nom) else null,
             maxLength = maxLength,
             singleLine = true
         )
@@ -147,20 +156,6 @@ fun SubmitButton(onClick: () -> Unit, isLoading: Boolean = false) {
     }
 }
 
-fun getLatLngFromAddress(context: Context, mAddress: String): Address? {
-    val coder = Geocoder(context)
-    return try {
-       val addressList: List<Address> = coder.getFromLocationName(mAddress, 5) as List<Address>
-        if (addressList.isEmpty()) {
-            null
-        } else {
-            addressList[0]
-        }
-    } catch (e: Exception) {
-        e.printStackTrace()
-        null
-    }
-}
 
 @Preview
 @Composable

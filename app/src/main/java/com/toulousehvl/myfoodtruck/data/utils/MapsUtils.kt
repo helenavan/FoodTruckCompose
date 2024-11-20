@@ -1,6 +1,7 @@
 package com.toulousehvl.myfoodtruck.data.utils
 
 import android.content.Context
+import android.location.Address
 import android.location.Geocoder
 import org.osmdroid.util.GeoPoint
 import java.util.Locale
@@ -60,6 +61,21 @@ class MapsUtils {
 
             return earthRadius * c // Distance en kilomètres
 
+        }
+
+        fun getLatLngFromAddress(context: Context, mAddress: String): Address? {
+            val coder = Geocoder(context)
+            return try {
+                val addressList: List<Address> = coder.getFromLocationName(mAddress, 5) as List<Address>
+                if (addressList.isEmpty()) {
+                    null
+                } else {
+                    addressList[0]
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                null
+            }
         }
     }
 }

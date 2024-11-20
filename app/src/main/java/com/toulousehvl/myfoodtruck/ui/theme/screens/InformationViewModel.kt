@@ -1,7 +1,6 @@
 package com.toulousehvl.myfoodtruck.ui.theme.screens
 
 import android.content.Context
-import android.location.Address
 import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -10,7 +9,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.firestore.FirebaseFirestore
 import com.toulousehvl.myfoodtruck.data.model.Truck
+import com.toulousehvl.myfoodtruck.data.utils.MapsUtils.Companion.getLatLngFromAddress
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -31,6 +33,9 @@ class InformationViewModel @Inject constructor() : ViewModel() {
 
     var showError by mutableStateOf(false)
         private set
+
+    private val _showErrorMessage = MutableSharedFlow<Boolean>()
+    val showErrorMessage = _showErrorMessage.asSharedFlow()
 
     fun onTruckNameChange(newName: String) {
         truckName = newName
@@ -63,6 +68,7 @@ class InformationViewModel @Inject constructor() : ViewModel() {
         viewModelScope.launch {
            val result = getLatLngFromAddress(context, truckAddress)
             result?.let {
+                _showErrorMessage.emit(false)
                 addDataToFirestore(
                     Truck(
                         nameTruck = truckName,
@@ -78,6 +84,8 @@ class InformationViewModel @Inject constructor() : ViewModel() {
                         num = it.subThoroughfare
                     )
                 )
+            } ?: run {
+                _showErrorMessage.emit(true)
             }
         }
     }

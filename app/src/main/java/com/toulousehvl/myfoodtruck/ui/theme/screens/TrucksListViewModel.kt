@@ -12,6 +12,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.toulousehvl.myfoodtruck.data.ResultWrapper
 import com.toulousehvl.myfoodtruck.data.model.Truck
 import com.toulousehvl.myfoodtruck.data.utils.MapsUtils.Companion.distanceFoodTruckAndUser
+import com.toulousehvl.myfoodtruck.data.utils.MapsUtils.Companion.getLatLngFromAddress
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -77,7 +78,9 @@ class TrucksListViewModel @Inject constructor() : ViewModel() {
             5.0.filterFoodTrucks(
                 _dataListTrucksState.value
             )
-        }!!
+        } ?: run {
+            _dataListTrucksState.value = emptyList()
+        }
     }
 
     var searchtext by mutableStateOf("")
@@ -125,6 +128,8 @@ class TrucksListViewModel @Inject constructor() : ViewModel() {
                         document.toObject(Truck::class.java)?.copy(documentId = document.id)
                     }
                 _dataListTrucksState.value = 5.0.filterFoodTrucks(dataList)
+
+                Log.d("TruckListViewModel", "== Current data: ${_dataListTrucksState.value}")
 
                 _loaderUiState.value = ResultWrapper.Success("ok")
             } else {
