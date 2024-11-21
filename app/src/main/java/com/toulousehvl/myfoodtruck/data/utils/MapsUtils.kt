@@ -3,7 +3,10 @@ package com.toulousehvl.myfoodtruck.data.utils
 import android.content.Context
 import android.location.Address
 import android.location.Geocoder
+import com.toulousehvl.myfoodtruck.data.model.Truck
 import org.osmdroid.util.GeoPoint
+import java.time.ZoneId
+import java.time.ZonedDateTime
 import java.util.Locale
 import kotlin.math.atan2
 import kotlin.math.cos
@@ -44,7 +47,10 @@ class MapsUtils {
             return cityName
         }
 
-        fun distanceFoodTruckAndUser(geoPointUser: GeoPoint, geoPointFoodTruck: GeoPoint): Double {
+        private fun distanceFoodTruckAndUser(
+            geoPointUser: GeoPoint,
+            geoPointFoodTruck: GeoPoint
+        ): Double {
             val earthRadius = 6371.0
             val latUser = geoPointUser.latitude
             val lonUser = geoPointUser.longitude
@@ -75,6 +81,29 @@ class MapsUtils {
             } catch (e: Exception) {
                 e.printStackTrace()
                 null
+            }
+        }
+
+        fun Double.filterFoodTrucks(
+            trucks: List<Truck>,
+            userLocation: GeoPoint? = null
+        ): List<Truck> {
+
+            if (trucks.isNullOrEmpty()) return emptyList()
+
+            val currentDateTime =
+                ZonedDateTime.now(ZoneId.systemDefault())  // Utilise la zone horaire locale
+            val twoHoursAgo = currentDateTime.minusHours(2).toInstant().toEpochMilli()
+            return trucks.filter { truck ->
+                if (userLocation != null) {
+                    (distanceFoodTruckAndUser(
+                        userLocation,
+                        GeoPoint(truck.latd!!, truck.lgtd!!)
+                    ) <= this)
+                            && (truck.date != null) && (truck.date!! >= twoHoursAgo)
+                } else {
+                    truck.date != null && truck.date!! >= twoHoursAgo
+                }
             }
         }
     }

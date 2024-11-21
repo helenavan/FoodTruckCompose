@@ -12,8 +12,11 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.material.ExperimentalMaterialApi
@@ -117,7 +120,6 @@ fun MainScreen(
         }
     ) { innerPadding ->
         Column {
-            BannerConnexionError()
             Box(
                 modifier = Modifier
                     .padding(
@@ -142,14 +144,13 @@ fun BannerConnexionError(mainViewModel: MainViewModel = hiltViewModel()) {
     val connectionState by mainViewModel.isInternetAvailable.collectAsStateWithLifecycle()
 
     if (!connectionState) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(Color.Red)
-        ) {
+        Row {
             Text(
                 text = "Pas de connexion internet",
-                modifier = Modifier.padding(1.dp),
+                modifier = Modifier
+                    .padding(1.dp)
+                    .fillMaxWidth()
+                    .background(Color.Red),
                 color = Color.White, textAlign = TextAlign.Center
             )
         }
@@ -192,15 +193,20 @@ fun SetStatusBarColor(activity: ComponentActivity) {
 
 @Composable
 fun DisplayLogo() {
-    Image(
-        modifier = Modifier
-            .padding(4.dp, 2.dp, 2.dp, 4.dp)
-            .fillMaxWidth(),
-        painter = painterResource(id = R.drawable.logo_fd_logo),
-        contentDescription = "frites",
-        colorFilter = androidx.compose.ui.graphics.ColorFilter.tint(colorResource(id = R.color.teal_700))
-    )
+    Column() {
+        BannerConnexionError()
+        Spacer(modifier = Modifier.height(6.dp))
+        Image(
+            modifier = Modifier
+                .padding(4.dp, 2.dp, 2.dp, 4.dp)
+                .fillMaxWidth(),
+            painter = painterResource(id = R.drawable.logo_fd_logo),
+            contentDescription = "frites",
+            colorFilter = androidx.compose.ui.graphics.ColorFilter.tint(colorResource(id = R.color.teal_700))
+        )
+    }
 }
+
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalMaterial3Api::class)
 @Preview(showBackground = true)

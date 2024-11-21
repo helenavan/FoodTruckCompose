@@ -11,7 +11,7 @@ import androidx.lifecycle.viewModelScope
 import com.google.firebase.firestore.FirebaseFirestore
 import com.toulousehvl.myfoodtruck.data.ResultWrapper
 import com.toulousehvl.myfoodtruck.data.model.Truck
-import com.toulousehvl.myfoodtruck.data.utils.MapsUtils.Companion.distanceFoodTruckAndUser
+import com.toulousehvl.myfoodtruck.data.utils.MapsUtils.Companion.filterFoodTrucks
 import com.toulousehvl.myfoodtruck.data.utils.MapsUtils.Companion.getLatLngFromAddress
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -22,14 +22,13 @@ import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import org.osmdroid.util.GeoPoint
-import java.time.ZoneId
-import java.time.ZonedDateTime
 import javax.inject.Inject
 
 @HiltViewModel
 class TrucksListViewModel @Inject constructor() : ViewModel() {
 
-    private val _loaderUiState = MutableStateFlow<ResultWrapper<Truck>>(ResultWrapper.Loading(true))
+    private val _loaderUiState =
+        MutableStateFlow<ResultWrapper<Truck>>(ResultWrapper.Loading(false))
     val loaderUiState: StateFlow<ResultWrapper<Truck>> = _loaderUiState
 
     private val _dataListTrucksState = MutableStateFlow<List<Truck>>(emptyList())
@@ -71,16 +70,11 @@ class TrucksListViewModel @Inject constructor() : ViewModel() {
         showError = newError
     }
 
-    //TODO gestion erreur si null
     fun onUserLocationChange(newLocation: GeoPoint) {
         userLocation = newLocation
-        userLocation?.let {
-            5.0.filterFoodTrucks(
-                _dataListTrucksState.value
-            )
-        } ?: run {
-            _dataListTrucksState.value = emptyList()
-        }
+        _dataListTrucksState.value = 5.0.filterFoodTrucks(
+            _dataListTrucksState.value, userLocation
+        )
     }
 
     var searchtext by mutableStateOf("")
@@ -127,9 +121,7 @@ class TrucksListViewModel @Inject constructor() : ViewModel() {
                     val dataList = snapshot.documents.mapNotNull { document ->
                         document.toObject(Truck::class.java)?.copy(documentId = document.id)
                     }
-                _dataListTrucksState.value = 5.0.filterFoodTrucks(dataList)
-
-                Log.d("TruckListViewModel", "== Current data: ${_dataListTrucksState.value}")
+                _dataListTrucksState.value = 5.0.filterFoodTrucks(dataList, userLocation)
 
                 _loaderUiState.value = ResultWrapper.Success("ok")
             } else {
@@ -196,22 +188,4 @@ class TrucksListViewModel @Inject constructor() : ViewModel() {
         isLoading = false
     }
 
-    private fun Double.filterFoodTrucks(
-        trucks: List<Truck>
-    ): List<Truck> {
-        val currentDateTime =
-            ZonedDateTime.now(ZoneId.systemDefault())  // Utilise la zone horaire locale
-        val twoHoursAgo = currentDateTime.minusHours(2).toInstant().toEpochMilli()
-        return trucks.filter { truck ->
-            if (userLocation != null) {
-                (distanceFoodTruckAndUser(
-                    userLocation!!,
-                    GeoPoint(truck.latd!!, truck.lgtd!!)
-                ) <= this)
-                        && (truck.date != null) && (truck.date!! >= twoHoursAgo)
-            } else {
-                truck.date != null && truck.date!! >= twoHoursAgo
-            }
-        }
-    }
 }

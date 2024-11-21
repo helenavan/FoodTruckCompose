@@ -61,9 +61,10 @@ fun TrucksListScreen(
 
     //animation
     val pullRefreshState = rememberPullRefreshState(
-        refreshing = uiState is ResultWrapper.Loading,
+        refreshing = uiState is ResultWrapper.Loading && trucks.isNotEmpty(),
         onRefresh = viewModel::fetchDataFromFirestore
     )
+
     Column {
         Spacer(modifier = Modifier.height(56.dp))
         Box(
@@ -71,16 +72,17 @@ fun TrucksListScreen(
                 .fillMaxSize()
                 .pullRefresh(pullRefreshState)
         ) {
-            when (uiState) {
-                is ResultWrapper.Success -> {
-                    Column(modifier = Modifier.fillMaxSize()) {
-                        Spacer(modifier = Modifier.height(16.dp))
-                        SearchBar(
-                            value = searchText,
-                            hint = stringResource(R.string.rechercher_un_foodtruck),
-                            onValueChange = viewModel::onSearchTextChange
-                        )
-                        Spacer(modifier = Modifier.height(16.dp))
+            Column(modifier = Modifier.fillMaxSize()) {
+                Spacer(modifier = Modifier.height(16.dp))
+                SearchBar(
+                    value = searchText,
+                    hint = stringResource(R.string.rechercher_un_foodtruck),
+                    onValueChange = viewModel::onSearchTextChange
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+
+                when (uiState) {
+                    is ResultWrapper.Success -> {
                         TruckList(
                             trucks = if (searchText.isEmpty()) trucks else searchResults,
                             onItemClick = { selectedTruck ->
@@ -91,14 +93,14 @@ fun TrucksListScreen(
                             }
                         )
                     }
-                }
 
-                is ResultWrapper.Error -> {
-                    Text(text = "Error fetching data")
-                }
+                    is ResultWrapper.Error -> {
+                        Text(text = "Error fetching data")
+                    }
 
-                is ResultWrapper.Loading -> {
-                    Log.d("TrucksListScreen", "=== Loading")
+                    is ResultWrapper.Loading -> {
+                        Log.d("TrucksListScreen", "Loading")
+                    }
                 }
             }
 

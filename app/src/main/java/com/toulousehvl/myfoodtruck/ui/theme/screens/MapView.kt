@@ -12,7 +12,6 @@ import androidx.compose.material.icons.filled.MyLocation
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -48,7 +47,6 @@ fun MapView(
     truckId: String? = "null",
     viewModel: TrucksListViewModel = hiltViewModel()
 ) {
-    Configuration.getInstance().userAgentValue = BuildConfig.LIBRARY_PACKAGE_NAME
 
     val context = LocalContext.current
 
@@ -64,6 +62,8 @@ fun MapView(
     val foodTruckCategory = viewModel.selectedCategory
     val showErrorField = viewModel.showError
 
+    Configuration.getInstance().userAgentValue = BuildConfig.LIBRARY_PACKAGE_NAME
+
     mapController.zoomTo(16.0)
     mapView.zoomController.setVisibility(org.osmdroid.views.CustomZoomButtonsController.Visibility.NEVER)
     mapView.setTileSource(TileSourceFactory.MAPNIK)
@@ -71,12 +71,13 @@ fun MapView(
 
     val mLocationOverlay = rememberUserLocationOverlay(mapView, viewModel)
 
-    LaunchedEffect(key1 = truckId) {
-        mLocationOverlay.enableMyLocation()
-        mLocationOverlay.enableFollowLocation()
-    }
+    //TODO center foodtruck
+//    LaunchedEffect(key1 = truckId) {
+    // mLocationOverlay.enableMyLocation()
+//        mLocationOverlay.enableFollowLocation()
+//    }
 
-    centerMapOnTruckLocation(truckId, mapView, viewModel)
+    // centerMapOnTruckLocation(truckId, mapView, viewModel)
 
     Box(modifier = Modifier.fillMaxSize()) {
 
@@ -89,6 +90,7 @@ fun MapView(
         }
 
         if (showDialog && selectedLocation != null) {
+
             getAddressFromGeoPoint(LocalContext.current, GeoPoint(selectedLocation))?.let {
 
                     addressFT ->
@@ -121,8 +123,8 @@ fun MapView(
                 return false
             }
 
-            override fun longPressHelper(p: GeoPoint?): Boolean {
-                selectedLocation = p
+            override fun longPressHelper(geoPoint: GeoPoint?): Boolean {
+                selectedLocation = geoPoint
                 showDialog = true
                 return true
             }
@@ -167,6 +169,7 @@ fun rememberUserLocationOverlay(
             }
         }
     locationOverlay.enableMyLocation()
+    locationOverlay.enableFollowLocation()
     mapView.overlays.add(locationOverlay)
 
     return locationOverlay

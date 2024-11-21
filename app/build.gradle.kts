@@ -70,6 +70,7 @@ android {
 dependencies {
     implementation(libs.firebase.config)
     implementation(libs.firebase.firestore)
+    implementation(libs.androidx.junit.ktx)
     val osmdroidVersion by extra( "6.1.18")
 
     implementation(libs.androidx.core.ktx)
