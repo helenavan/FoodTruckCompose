@@ -36,6 +36,7 @@ import org.osmdroid.events.MapEventsReceiver
 import org.osmdroid.library.BuildConfig
 import org.osmdroid.tileprovider.tilesource.TileSourceFactory
 import org.osmdroid.util.GeoPoint
+import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.MapEventsOverlay
 import org.osmdroid.views.overlay.Marker
 import org.osmdroid.views.overlay.mylocation.GpsMyLocationProvider
@@ -97,7 +98,7 @@ fun MapView(
                 viewModel.onFoodTruckAddressChange(addressFT)
 
                 InputDialog(
-                    dialogTitle = stringResource(R.string.ajouter_un_food_truck),
+                    dialogTitle = stringResource(R.string.add_one_food_truck),
                     address = foodTruckAddress,
                     nameTruck = foodTruckName,
                     category = foodTruckCategory,
@@ -153,7 +154,7 @@ fun MapView(
 //TODO around user location
 @Composable
 fun rememberUserLocationOverlay(
-    mapView: org.osmdroid.views.MapView,
+    mapView: MapView,
     viewModel: TrucksListViewModel
 ): MyLocationNewOverlay {
     val context = LocalContext.current
@@ -176,7 +177,7 @@ fun rememberUserLocationOverlay(
 
 }
 
-fun addTruckMarkersToMap(mapView: org.osmdroid.views.MapView, trucks: List<Truck>) {
+fun addTruckMarkersToMap(mapView: MapView, trucks: List<Truck>) {
     for (truck in trucks) {
         truck.latd?.let { lat ->
             truck.lgtd?.let { lng ->

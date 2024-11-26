@@ -49,7 +49,7 @@ fun InputDialog(
                     onConfirm()
                 }
             ) {
-                Text(stringResource(R.string.valider))
+                Text(stringResource(R.string.confirm))
             }
         },
         dismissButton = {
@@ -62,7 +62,7 @@ fun InputDialog(
                     onShowErrorChange(false)
                 }
             ) {
-                Text(stringResource(R.string.annuler))
+                Text(stringResource(R.string.cancel))
             }
         },
         text = {
@@ -71,7 +71,7 @@ fun InputDialog(
                     readOnly = true,
                     value = address,
                     onValueChange = onTextAddressChange,
-                    label = { Text(text = stringResource(id = R.string.adresse)) },
+                    label = { Text(text = stringResource(id = R.string.address)) },
                     singleLine = false,
                     maxLines = 3,
                     modifier = Modifier
@@ -81,8 +81,8 @@ fun InputDialog(
                 CustomTextField(
                     value = nameTruck,
                     onValueChange = onTextNameChange,
-                    label = stringResource(id = R.string.nom_max_caract_res, 30),
-                    errorMessage = if (showError) stringResource(R.string.veuillez_entrer_un_nom) else null,
+                    label = stringResource(id = R.string.name_max_characters, 30),
+                    errorMessage = if (showError) stringResource(R.string.name_field) else null,
                     maxLength = 30,
                     singleLine = true
                 )

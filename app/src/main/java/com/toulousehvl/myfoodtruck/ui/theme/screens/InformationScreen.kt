@@ -1,6 +1,5 @@
 package com.toulousehvl.myfoodtruck.ui.theme.screens
 
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -63,9 +62,9 @@ fun InformationScreen(viewModel: InformationViewModel = hiltViewModel()) {
         LaunchedEffect(Unit) {
             viewModel.showErrorMessage.collect { errorMessage ->
                 if (errorMessage) {
-                    Toast.makeText(context, R.string.adresse_invalide, Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, R.string.error_address, Toast.LENGTH_SHORT).show()
                 } else {
-                    Toast.makeText(context, R.string.foodtruck_ajouté, Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, R.string.foodtruck_added, Toast.LENGTH_SHORT).show()
                 }
             }
         }
@@ -73,7 +72,7 @@ fun InformationScreen(viewModel: InformationViewModel = hiltViewModel()) {
         Spacer(modifier = Modifier.height(60.dp))
 
         Text(
-            text = stringResource(R.string.ajouter_un_foodtruck),
+            text = stringResource(R.string.add_foodtruck),
             style = MaterialTheme.typography.headlineSmall,
             modifier = Modifier.padding(start = 16.dp, end = 16.dp)
         )
@@ -82,8 +81,8 @@ fun InformationScreen(viewModel: InformationViewModel = hiltViewModel()) {
         CustomTextField(
             value = truckName,
             onValueChange = viewModel::onTruckNameChange,
-            label = stringResource(id = R.string.nom_max_caract_res, maxLength),
-            errorMessage = if (truckName.isEmpty() && showError) stringResource(R.string.veuillez_entrer_un_nom) else null,
+            label = stringResource(id = R.string.name_max_characters, maxLength),
+            errorMessage = if (truckName.isEmpty() && showError) stringResource(R.string.name_field) else null,
             maxLength = maxLength,
             singleLine = true
         )
@@ -102,11 +101,11 @@ fun InformationScreen(viewModel: InformationViewModel = hiltViewModel()) {
         CustomTextField(
             value = truckAddress,
             onValueChange = viewModel::onTruckAddressChange,
-            label = stringResource(id = R.string.adresse),
+            label = stringResource(id = R.string.address),
             errorMessage = when {
-                truckAddress.isEmpty() && showError -> stringResource(R.string.veuillez_entrer_une_adresse_valide)
+                truckAddress.isEmpty() && showError -> stringResource(R.string.check_address)
                 truckAddress.length >= maxLengthAddress -> stringResource(
-                    R.string.adresse_max_characteres,
+                    R.string.max_characters_address,
                     maxLengthAddress
                 )
 
@@ -145,7 +144,7 @@ fun SubmitButton(onClick: () -> Unit, isLoading: Boolean = false) {
             )
 
         ) {
-            Text(text = stringResource(R.string.ajouter))
+            Text(text = stringResource(R.string.add))
         }
     }
 

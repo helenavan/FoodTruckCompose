@@ -5,7 +5,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import com.toulousehvl.myfoodtruck.R
 
 @Composable
 fun ShowDialogPermission(
@@ -18,7 +20,7 @@ fun ShowDialogPermission(
     ) {
         // Display a message indicating the permission request process
         Text(
-            text = "Requesting location permission...",
+            text = stringResource(R.string.location_permission),
             textAlign = TextAlign.Center
         )
 

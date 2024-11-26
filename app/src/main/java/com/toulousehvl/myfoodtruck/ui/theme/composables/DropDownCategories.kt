@@ -59,7 +59,7 @@ fun DropdownMenuWithFocus(
             value = selectedCategory,
             onValueChange = {},
             readOnly = true,
-            label = { Text(stringResource(R.string.choisir_une_cat_gorie)) },
+            label = { Text(stringResource(R.string.choice_category)) },
             trailingIcon = {
                 Icon(icon, "", Modifier.clickable { expanded = !expanded })
             },

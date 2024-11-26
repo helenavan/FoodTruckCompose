@@ -35,19 +35,15 @@ fun RequestLocationPermission(
     )
     // Use LaunchedEffect to handle permissions logic when the composition is launched.
     LaunchedEffect(key1 = permissionState) {
-        // Check if all previously granted permissions are revoked.
         val allPermissionsRevoked =
             permissionState.permissions.size == permissionState.revokedPermissions.size
 
-        // Filter permissions that need to be requested.
         val permissionsToRequest = permissionState.permissions.filter {
             !it.status.isGranted
         }
 
-        // If there are permissions to request, launch the permission request.
         if (permissionsToRequest.isNotEmpty()) permissionState.launchMultiplePermissionRequest()
 
-        // Execute callbacks based on permission status.
         if (allPermissionsRevoked) {
             onPermissionsRevoked()
         } else {
@@ -74,11 +70,11 @@ object PermissionResultTex {
 
     fun onPermissionDenied() {
         showPermissionResultText = true
-        permissionResultText = "Permission Denied === :("
+        permissionResultText = "Permission Denied"
     }
 
     fun onPermissionsRevoked() {
         showPermissionResultText = true
-        permissionResultText = "Permission Revoked === :("
+        permissionResultText = "Permission Revoked"
     }
 }

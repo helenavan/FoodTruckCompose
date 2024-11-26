@@ -25,7 +25,7 @@ class MapsUtils {
                     // Concaténer les différents champs pour obtenir une adresse complète
                     "${address.getAddressLine(0)}"
                 } else {
-                    null // Pas d'adresse trouvée
+                    null
                 }
             } catch (e: Exception) {
                 e.printStackTrace()

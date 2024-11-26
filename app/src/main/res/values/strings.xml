@@ -1,14 +1,14 @@
 <resources>
     <string name="app_name">My Food Truck</string>
-    <string name="ajouter_un_foodtruck">Ajoutez votre propre FoodTruck</string>
-    <string name="nom_max_caract_res">Nom (max %1$s caractères)</string>
-    <string name="veuillez_entrer_un_nom">Veuillez entrer un nom</string>
-    <string name="le_texte_d_passe_la_limite_de_caract_res">Le texte dépasse la limite de %1$s caractères</string>
-    <string name="adresse">Adresse</string>
-    <string name="ajouter">Ajouter</string>
-    <string name="choisir_une_cat_gorie">Choisir une catégorie</string>
-    <string name="veuillez_entrer_une_adresse_valide">Veuillez entrer une adresse valide</string>
-    <string name="adresse_max_characteres">l\'adresse est trop longue</string>
+    <string name="add_foodtruck">Ajoutez votre propre FoodTruck</string>
+    <string name="name_max_characters">Nom (max %1$s caractères)</string>
+    <string name="name_field">Veuillez entrer un nom</string>
+    <string name="check_field_text">Le texte dépasse la limite de %1$s caractères</string>
+    <string name="address">Adresse</string>
+    <string name="add">Ajouter</string>
+    <string name="choice_category">Choisir une catégorie</string>
+    <string name="check_address">Veuillez entrer une adresse valide</string>
+    <string name="max_characters_address">l\'adresse est trop longue</string>
 
     <string-array name="food_categories">
         <item>Italien/Pizza</item>
@@ -21,12 +21,13 @@
     </string-array>
 
     <string name="error_selected_category">Veuillez choisir une catégorie</string>
-    <string name="rechercher_un_foodtruck">Rechercher un foodtruck</string>
+    <string name="search_foodtruck">Rechercher un foodtruck</string>
     <string name="empty_truck">Aucun foodtruck à afficher</string>
-    <string name="valider">Valider</string>
-    <string name="annuler">Annuler</string>
-    <string name="ajouter_un_food_truck">Ajouter un food truck</string>
-    <string name="adresse_invalide">Adresse invalide. Veuillez recommencer.</string>
-    <string name="foodtruck_ajouté">FoodTruck ajouté !</string>
+    <string name="confirm">Valider</string>
+    <string name="cancel">Annuler</string>
+    <string name="add_one_food_truck">Ajouter un food truck</string>
+    <string name="error_address">Adresse invalide. Veuillez recommencer.</string>
+    <string name="foodtruck_added">FoodTruck ajouté !</string>
+    <string name="location_permission">Demande d\'autorisation pour la géolocalisation...</string>
 
 </resources>

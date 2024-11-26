@@ -76,10 +76,20 @@ fun TrucksListScreen(
                 Spacer(modifier = Modifier.height(16.dp))
                 SearchBar(
                     value = searchText,
-                    hint = stringResource(R.string.rechercher_un_foodtruck),
+                    hint = stringResource(R.string.search_foodtruck),
                     onValueChange = viewModel::onSearchTextChange
                 )
                 Spacer(modifier = Modifier.height(16.dp))
+                //TODO
+                if (searchResults.isNullOrEmpty()) {
+                    Text(
+                        text = stringResource(R.string.empty_truck), modifier = Modifier
+                            .padding(16.dp)
+                            .fillMaxSize(),
+                        textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+                        color = Color.Gray
+                    )
+                }
 
                 when (uiState) {
                     is ResultWrapper.Success -> {
@@ -121,14 +131,6 @@ fun TruckList(
     trucks: List<Truck>,
     onItemClick: (Truck) -> Unit,
 ) {
-    if (trucks.isNullOrEmpty()) {
-        Text(text = stringResource(R.string.empty_truck), modifier = Modifier
-            .padding(16.dp)
-            .fillMaxSize(),
-            textAlign = androidx.compose.ui.text.style.TextAlign.Center,
-            color = Color.Gray)
-    }
-
     if (trucks.isNotEmpty()) {
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
