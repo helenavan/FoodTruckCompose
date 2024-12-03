@@ -120,11 +120,20 @@ dependencies {
     //Google Service
     implementation (libs.play.services.location)
 
+    //Local unit tests dependencies
     testImplementation(libs.junit)
+    testImplementation (libs.kotlinx.coroutines.test)
+    testImplementation (libs.mockk)
+    testImplementation (libs.mockwebserver)
+    testImplementation (libs.androidx.core.testing)
+
+
+    //Androidx test dependencies - Instrumented testing dependencies
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
+
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 }

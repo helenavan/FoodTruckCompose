@@ -1,5 +1,6 @@
 package com.toulousehvl.myfoodtruck.data.model
 
+import com.google.firebase.firestore.DocumentId
 import kotlinx.serialization.Serializable
 
 

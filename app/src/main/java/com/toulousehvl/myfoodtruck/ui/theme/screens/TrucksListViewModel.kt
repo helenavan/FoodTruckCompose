@@ -11,6 +11,7 @@ import androidx.lifecycle.viewModelScope
 import com.google.firebase.firestore.FirebaseFirestore
 import com.toulousehvl.myfoodtruck.data.ResultWrapper
 import com.toulousehvl.myfoodtruck.data.model.Truck
+import com.toulousehvl.myfoodtruck.data.service.TruckRepositoryImpl
 import com.toulousehvl.myfoodtruck.data.utils.MapsUtils.Companion.filterFoodTrucks
 import com.toulousehvl.myfoodtruck.data.utils.MapsUtils.Companion.getLatLngFromAddress
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -25,7 +26,7 @@ import org.osmdroid.util.GeoPoint
 import javax.inject.Inject
 
 @HiltViewModel
-class TrucksListViewModel @Inject constructor() : ViewModel() {
+class TrucksListViewModel @Inject constructor(val truckRepository: TruckRepositoryImpl) : ViewModel() {
 
     private val _loaderUiState =
         MutableStateFlow<ResultWrapper<Truck>>(ResultWrapper.Loading(false))
@@ -106,29 +107,45 @@ class TrucksListViewModel @Inject constructor() : ViewModel() {
         searchtext = newText
     }
 
+    //TODO
     fun fetchDataFromFirestore() {
-        val db = FirebaseFirestore.getInstance()
-        val docRef = db.collection("foodtrucks")
-
-        docRef.addSnapshotListener { snapshot, e ->
-                if (e != null) {
-                    Log.w("Firestore", "Listen failed.", e)
-                    _loaderUiState.value = ResultWrapper.Error(e)
-                    return@addSnapshotListener
-                }
-
-            if (snapshot != null && !snapshot.isEmpty) {
-                    val dataList = snapshot.documents.mapNotNull { document ->
-                        document.toObject(Truck::class.java)?.copy(documentId = document.id)
-                    }
-                _dataListTrucksState.value = 5.0.filterFoodTrucks(dataList, userLocation)
-
+        viewModelScope.launch {
+            _loaderUiState.value = ResultWrapper.Loading(true)
+            val result = truckRepository.getTrucksList()
+            Log.d("TrucksListViewModel", "fetchDataFromFirestore: === $result")
+            result.addOnSuccessListener {
+                _dataListTrucksState.value = 5.0.filterFoodTrucks(it, userLocation)
                 _loaderUiState.value = ResultWrapper.Success("ok")
-            } else {
-                _loaderUiState.value = ResultWrapper.Error(Exception("No data found"))
+            }.addOnFailureListener {
+                _loaderUiState.value = ResultWrapper.Error(it)
             }
         }
     }
+
+
+//    fun fetchDataFromFirestore() {
+//        val db = FirebaseFirestore.getInstance()
+//        val docRef = db.collection("foodtrucks")
+//
+//        docRef.addSnapshotListener { snapshot, e ->
+//                if (e != null) {
+//                    Log.w("Firestore", "Listen failed.", e)
+//                    _loaderUiState.value = ResultWrapper.Error(e)
+//                    return@addSnapshotListener
+//                }
+//
+//            if (snapshot != null && !snapshot.isEmpty) {
+//                    val dataList = snapshot.documents.mapNotNull { document ->
+//                        document.toObject(Truck::class.java)?.copy(documentId = document.id)
+//                    }
+//                _dataListTrucksState.value = 5.0.filterFoodTrucks(dataList, userLocation)
+//
+//                _loaderUiState.value = ResultWrapper.Success("ok")
+//            } else {
+//                _loaderUiState.value = ResultWrapper.Error(Exception("No data found"))
+//            }
+//        }
+//    }
 
     fun getTruckById(id: String): Truck? {
         val ref = FirebaseFirestore.getInstance().collection("foodtrucks").document(id)
@@ -174,6 +191,8 @@ class TrucksListViewModel @Inject constructor() : ViewModel() {
     private fun addDataToFirestore(truck: Truck) {
         isLoading = true
         val db = FirebaseFirestore.getInstance()
+        val document = db.collection("foodtrucks").document()
+        truck.documentId = document.id
         db.collection("foodtrucks")
             .add(truck)
             .addOnSuccessListener {
