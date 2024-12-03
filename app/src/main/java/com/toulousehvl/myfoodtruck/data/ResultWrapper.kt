@@ -1,7 +1,7 @@
 package com.toulousehvl.myfoodtruck.data
 
 sealed class ResultWrapper<out T> {
-    data class Success<out T>(val data: String) : ResultWrapper<T>()
+    data class Success<out T>(val data: T) : ResultWrapper<T>()
     data class Error(val exception: Exception?) : ResultWrapper<Nothing>()
     data class Loading(val isLoading: Boolean) : ResultWrapper<Nothing>()
 

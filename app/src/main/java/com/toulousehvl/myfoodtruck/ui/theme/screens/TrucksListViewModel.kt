@@ -112,13 +112,19 @@ class TrucksListViewModel @Inject constructor(private val truckRepositoryImpl: T
     fun fetchDataFromFirestore() {
         viewModelScope.launch {
             _loaderUiState.value = ResultWrapper.Loading(true)
-            val result = truckRepositoryImpl.getTrucksList()
-            Log.d("TrucksListViewModel", "fetchDataFromFirestore: === $result")
-            result.addOnSuccessListener {
-                _dataListTrucksState.value = 5.0.filterFoodTrucks(it, userLocation)
-                _loaderUiState.value = ResultWrapper.Success("ok")
-            }.addOnFailureListener {
-                _loaderUiState.value = ResultWrapper.Error(it)
+            when (val result = truckRepositoryImpl.getTrucksList()) {
+                is ResultWrapper.Success -> {
+                    _dataListTrucksState.value = result.data
+                    _loaderUiState.value = ResultWrapper.Success(Truck())
+                }
+
+                is ResultWrapper.Error -> {
+                    _loaderUiState.value = ResultWrapper.Error(result.exception)
+                }
+
+                is ResultWrapper.Loading -> {
+                    _loaderUiState.value = ResultWrapper.Loading(true)
+                }
             }
         }
     }
@@ -164,19 +170,25 @@ class TrucksListViewModel @Inject constructor(private val truckRepositoryImpl: T
         }
     }
 
-    private fun addDataToFirestore(truck: Truck) {
+    private suspend fun addDataToFirestore(truck: Truck) {
         isLoading = true
-        truckRepositoryImpl.addTruck(truck).addOnCompleteListener { task ->
-            if (task.isSuccessful) {
+        when (val result = truckRepositoryImpl.addTruck(truck)) {
+            is ResultWrapper.Success -> {
                 fetchDataFromFirestore()
                 foodTruckName = ""
                 foodTruckAddress = ""
                 selectedCategory = ""
                 isLoading = false
-            } else {
-                Log.w("TrucksListViewModel", "Error adding document")
             }
-            isLoading = false
+
+            is ResultWrapper.Error -> {
+                Log.e("TrucksListViewModel", "Error adding document")
+            }
+
+            is ResultWrapper.Loading -> {
+                isLoading = true
+            }
         }
+        isLoading = false
     }
 }

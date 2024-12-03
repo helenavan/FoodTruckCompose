@@ -54,8 +54,6 @@ fun MapView(
 
     val listOfTrucks by viewModel.dataListTrucksState.collectAsStateWithLifecycle()
 
-    Log.d("MapView", "listOfTrucks: === $listOfTrucks")
-
     val mapView = rememberMapViewWithLifecycle()
     val mapController = mapView.controller
 

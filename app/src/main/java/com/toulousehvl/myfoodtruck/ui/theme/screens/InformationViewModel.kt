@@ -7,6 +7,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.toulousehvl.myfoodtruck.data.ResultWrapper
 import com.toulousehvl.myfoodtruck.data.model.Truck
 import com.toulousehvl.myfoodtruck.data.service.TruckRepositoryImpl
 import com.toulousehvl.myfoodtruck.data.utils.MapsUtils.Companion.getLatLngFromAddress
@@ -90,17 +91,20 @@ class InformationViewModel @Inject constructor(private val truckRepositoryImpl: 
             }
         }
     }
-
-    private fun addDataToFirestore(truck: Truck) {
+    //TODO corrrect loader
+    private suspend fun addDataToFirestore(truck: Truck) {
         isLoading = true
-        truckRepositoryImpl.addTruck(truck).addOnCompleteListener { task ->
-            if (task.isSuccessful) {
+        when (val result = truckRepositoryImpl.addTruck(truck)) {
+            is ResultWrapper.Success -> {
                 clearFields()
-                isLoading = false
-            } else {
+            }
+            is ResultWrapper.Error -> {
                 Log.e("InformationViewModel", "Error adding document")
             }
-            isLoading = false
+            is ResultWrapper.Loading -> {
+                isLoading = result.isLoading
+            }
         }
+        isLoading = false
     }
 }

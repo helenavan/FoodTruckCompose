@@ -1,16 +1,14 @@
 package com.toulousehvl.myfoodtruck.ui.theme.screens
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import com.google.firebase.firestore.CollectionReference
-import com.google.firebase.firestore.FirebaseFirestore
 import com.toulousehvl.myfoodtruck.data.model.Truck
-import io.mockk.every
+import com.toulousehvl.myfoodtruck.data.service.TruckRepositoryImpl
 import io.mockk.mockk
 import io.mockk.spyk
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.UnconfinedTestDispatcher
+import kotlinx.coroutines.newSingleThreadContext
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
 import org.junit.After
@@ -24,26 +22,25 @@ import org.osmdroid.util.GeoPoint
 @OptIn(ExperimentalCoroutinesApi::class, DelicateCoroutinesApi::class)
 class TrucksListViewModelTests {
     private lateinit var viewModel: TrucksListViewModel
+    private val testDispatcher = newSingleThreadContext("UI thread")
 
     @get:Rule
     val instantTaskExecutorRule = InstantTaskExecutorRule()
 
-    private val testDispatcher = UnconfinedTestDispatcher()
-
-    val mockFirestore = mockk<FirebaseFirestore>(relaxed = true)
-    val mockCollection = mockk<CollectionReference>(relaxed = true)
+    private lateinit var repositoryImpl: TruckRepositoryImpl
 
     @Before
     fun setup() {
         Dispatchers.setMain(testDispatcher)
-        viewModel = spyk(TrucksListViewModel())
-        every { mockFirestore.collection("foodtrucks") } returns mockCollection
-        every { FirebaseFirestore.getInstance() } returns mockFirestore
+        repositoryImpl = mockk()
+        viewModel = spyk(TrucksListViewModel(repositoryImpl))
+
     }
 
     @After
     fun tearDown() {
         Dispatchers.resetMain()
+        testDispatcher.close()
     }
 
     @Test

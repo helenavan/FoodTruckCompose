@@ -65,6 +65,8 @@ fun TrucksListScreen(
         onRefresh = viewModel::fetchDataFromFirestore
     )
 
+    Log.d("TrucksListScreen", "uiState ===> : $uiState")
+
     Column {
         Spacer(modifier = Modifier.height(56.dp))
         Box(
