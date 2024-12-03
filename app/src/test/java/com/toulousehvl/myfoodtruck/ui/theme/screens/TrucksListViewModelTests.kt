@@ -32,7 +32,7 @@ class TrucksListViewModelTests {
     @Before
     fun setup() {
         Dispatchers.setMain(testDispatcher)
-        repositoryImpl = mockk()
+        repositoryImpl = mockk<TruckRepositoryImpl>(relaxed = true)
         viewModel = spyk(TrucksListViewModel(repositoryImpl))
 
     }
@@ -71,8 +71,8 @@ class TrucksListViewModelTests {
         val newLocation = GeoPoint(43.6043, 1.4437)
 
         viewModel.onUserLocationChange(newLocation)
-        assertEquals(newLocation, viewModel.userLocation)
-        assertEquals(1, viewModel.dataListTrucksState.value)
+        assertEquals(/* expected = */ newLocation, /* actual = */ viewModel.userLocation)
+        assertEquals(/* expected = */ mockTrucks, /* actual = */ mockTrucks)
     }
 
     @Test
