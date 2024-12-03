@@ -2,20 +2,14 @@ package com.toulousehvl.myfoodtruck.data.service
 
 import com.google.android.gms.tasks.Task
 import com.google.firebase.firestore.FirebaseFirestore
+import com.toulousehvl.myfoodtruck.TruckConstants.TRUCK_COLLECTION_NAME
 import com.toulousehvl.myfoodtruck.data.model.Truck
 import javax.inject.Inject
 
-class TruckRepositoryImpl @Inject constructor() : TruckRepository {
-
-    private val _trucks = arrayListOf<Truck>()
+class TruckRepositoryImpl @Inject constructor() : TruckFirestoreRepository {
 
     private val firestoreInstance = FirebaseFirestore.getInstance()
-    private val truckCollection = firestoreInstance.collection("foodtrucks")
-
-    override fun findTruck(lat: Double, lon: Double): Truck? {
-      //  TODO("Not yet implemented")
-        return _trucks.firstOrNull { it.latd?.toDouble() == lat && it.lgtd?.toDouble() == lat }
-    }
+    private val truckCollection = firestoreInstance.collection(TRUCK_COLLECTION_NAME)
 
     override fun getTrucksList(): Task<List<Truck>> {
         val documentSnapshot = truckCollection.get()
@@ -26,5 +20,11 @@ class TruckRepositoryImpl @Inject constructor() : TruckRepository {
                 return@continueWith emptyList<Truck>()
             }
         }
+    }
+
+    override fun addTruck(truck: Truck): Task<Void> {
+        val document = truckCollection.document()
+        truck.documentId = document.id
+        return document.set(truck)
     }
 }

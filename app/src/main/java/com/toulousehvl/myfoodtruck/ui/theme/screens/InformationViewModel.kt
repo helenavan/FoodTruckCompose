@@ -7,8 +7,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.firebase.firestore.FirebaseFirestore
 import com.toulousehvl.myfoodtruck.data.model.Truck
+import com.toulousehvl.myfoodtruck.data.service.TruckRepositoryImpl
 import com.toulousehvl.myfoodtruck.data.utils.MapsUtils.Companion.getLatLngFromAddress
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -17,7 +17,8 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class InformationViewModel @Inject constructor() : ViewModel() {
+class InformationViewModel @Inject constructor(private val truckRepositoryImpl: TruckRepositoryImpl) :
+    ViewModel() {
 
     var truckName by mutableStateOf("")
         private set
@@ -92,16 +93,14 @@ class InformationViewModel @Inject constructor() : ViewModel() {
 
     private fun addDataToFirestore(truck: Truck) {
         isLoading = true
-        val db = FirebaseFirestore.getInstance()
-        db.collection("foodtrucks")
-            .add(truck)
-            .addOnSuccessListener {
+        truckRepositoryImpl.addTruck(truck).addOnCompleteListener { task ->
+            if (task.isSuccessful) {
                 clearFields()
                 isLoading = false
+            } else {
+                Log.e("InformationViewModel", "Error adding document")
             }
-            .addOnFailureListener { e ->
-                Log.w("Firestore", "Error adding document", e)
-                isLoading = false
-            }
+            isLoading = false
+        }
     }
 }

@@ -4,8 +4,9 @@ import com.google.android.gms.tasks.Task
 import com.toulousehvl.myfoodtruck.data.model.Truck
 
 //TODO when backend will be ready
-interface TruckRepository {
-    fun findTruck(lat: Double, lon: Double): Truck?
+interface TruckFirestoreRepository {
 
     fun getTrucksList(): Task<List<Truck>>
+
+    fun addTruck(truck: Truck): Task<Void>
 }
