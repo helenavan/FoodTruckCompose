@@ -73,7 +73,7 @@ class TrucksListViewModel @Inject constructor(private val truckRepositoryImpl: T
         showError = newError
     }
 
-    fun onUserLocationChange(newLocation: GeoPoint) {
+    fun onUserLocationChange(newLocation: GeoPoint?) {
         userLocation = newLocation
         _dataListTrucksState.value = 5.0.filterFoodTrucks(
             _dataListTrucksState.value, userLocation
@@ -114,7 +114,9 @@ class TrucksListViewModel @Inject constructor(private val truckRepositoryImpl: T
             _loaderUiState.value = ResultWrapper.Loading(true)
             when (val result = truckRepositoryImpl.getTrucksList()) {
                 is ResultWrapper.Success -> {
-                    _dataListTrucksState.value = result.data
+                    _dataListTrucksState.value = 5.0.filterFoodTrucks(
+                        result.data, userLocation
+                    )
                     _loaderUiState.value = ResultWrapper.Success(Truck())
                 }
 

@@ -1,7 +1,6 @@
 package com.toulousehvl.myfoodtruck.ui.theme.screens
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import com.toulousehvl.myfoodtruck.data.model.Truck
 import com.toulousehvl.myfoodtruck.data.service.TruckRepositoryImpl
 import io.mockk.mockk
 import io.mockk.spyk
@@ -63,16 +62,11 @@ class TrucksListViewModelTests {
 
     @Test
     fun onUserLocationChange_should_update_userLocation_and_filter_trucks() {
-        val mockTrucks = listOf(
-            Truck(nameTruck = "Truck 1", categorie = "Burger", latd = 1.0, lgtd = 2.0),
-            Truck(nameTruck = "Truck 2", categorie = "Pizza", latd = 3.0, lgtd = 4.0)
-        )
-
         val newLocation = GeoPoint(43.6043, 1.4437)
 
+        viewModel.fetchDataFromFirestore()
         viewModel.onUserLocationChange(newLocation)
         assertEquals(/* expected = */ newLocation, /* actual = */ viewModel.userLocation)
-        assertEquals(/* expected = */ mockTrucks, /* actual = */ mockTrucks)
     }
 
     @Test
