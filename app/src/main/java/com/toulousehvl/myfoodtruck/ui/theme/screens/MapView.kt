@@ -52,6 +52,7 @@ fun MapView(
 
     val context = LocalContext.current
 
+    viewModel.fetchDataFromFirestore()
     val listOfTrucks by viewModel.dataListTrucksState.collectAsStateWithLifecycle()
 
     val mapView = rememberMapViewWithLifecycle()
@@ -152,7 +153,6 @@ fun MapView(
     }
 }
 
-//TODO around user location
 @Composable
 fun rememberUserLocationOverlay(
     mapView: MapView,
@@ -160,13 +160,14 @@ fun rememberUserLocationOverlay(
 ): MyLocationNewOverlay {
     val context = LocalContext.current
     val locationProvider = GpsMyLocationProvider(context)
-    locationProvider.locationUpdateMinTime = 100L
+    locationProvider.locationUpdateMinTime = 1000L
     val locationOverlay =
         object : MyLocationNewOverlay(GpsMyLocationProvider(context), mapView) {
             override fun onLocationChanged(location: Location?, source: IMyLocationProvider?) {
                 super.onLocationChanged(location, source)
                 location?.let {
-                    viewModel.onUserLocationChange(GeoPoint(it.latitude, it.longitude))
+                        viewModel.onUserLocationChange(GeoPoint(it.latitude, it.longitude))
+                        Log.d("MapView", "onLocationChanged: ${it.latitude}, ${it.longitude}")
                 }
             }
         }

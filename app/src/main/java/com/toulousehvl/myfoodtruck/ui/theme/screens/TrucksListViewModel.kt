@@ -74,10 +74,10 @@ class TrucksListViewModel @Inject constructor(private val truckRepositoryImpl: T
     }
 
     fun onUserLocationChange(newLocation: GeoPoint?) {
-        userLocation = newLocation
-        _dataListTrucksState.value = 5.0.filterFoodTrucks(
-            _dataListTrucksState.value, userLocation
-        )
+            userLocation = newLocation
+            _dataListTrucksState.value = 5.0.filterFoodTrucks(
+                _dataListTrucksState.value, userLocation
+            )
     }
 
     var searchtext by mutableStateOf("")
@@ -181,6 +181,8 @@ class TrucksListViewModel @Inject constructor(private val truckRepositoryImpl: T
                 foodTruckAddress = ""
                 selectedCategory = ""
                 isLoading = false
+
+                fetchDataFromFirestore()
             }
 
             is ResultWrapper.Error -> {

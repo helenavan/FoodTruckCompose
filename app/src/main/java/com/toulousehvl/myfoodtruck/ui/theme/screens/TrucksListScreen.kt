@@ -65,8 +65,6 @@ fun TrucksListScreen(
         onRefresh = viewModel::fetchDataFromFirestore
     )
 
-    Log.d("TrucksListScreen", "uiState ===> : $uiState")
-
     Column {
         Spacer(modifier = Modifier.height(56.dp))
         Box(
@@ -93,27 +91,15 @@ fun TrucksListScreen(
                     )
                 }
 
-                when (uiState) {
-                    is ResultWrapper.Success -> {
-                        TruckList(
-                            trucks = if (searchText.isEmpty()) trucks else searchResults,
-                            onItemClick = { selectedTruck ->
-                                navController.navigate(
-                                    NavigationItem.MapTruck.route
-                                        .replace("{documentId}", "${selectedTruck.documentId}")
-                                )
-                            }
+                TruckList(
+                    trucks = if (searchText.isEmpty()) trucks else searchResults,
+                    onItemClick = { selectedTruck ->
+                        navController.navigate(
+                            NavigationItem.MapTruck.route
+                                .replace("{documentId}", "${selectedTruck.documentId}")
                         )
                     }
-
-                    is ResultWrapper.Error -> {
-                        Text(text = "Error fetching data")
-                    }
-
-                    is ResultWrapper.Loading -> {
-                        Log.d("TrucksListScreen", "Loading")
-                    }
-                }
+                )
             }
 
             PullRefreshIndicator(
