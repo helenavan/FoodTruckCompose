@@ -11,6 +11,7 @@ import com.toulousehvl.myfoodtruck.navigation.NavigationItem.ListTrucks
 import com.toulousehvl.myfoodtruck.navigation.NavigationItem.MapTruck
 import com.toulousehvl.myfoodtruck.ui.theme.screens.InformationScreen
 import com.toulousehvl.myfoodtruck.ui.theme.screens.MapView
+import com.toulousehvl.myfoodtruck.ui.theme.screens.SplashScreen
 import com.toulousehvl.myfoodtruck.ui.theme.screens.TrucksListScreen
 
 
@@ -19,7 +20,11 @@ import com.toulousehvl.myfoodtruck.ui.theme.screens.TrucksListScreen
 fun TrucksNavGraph(
     navController: NavHostController
 ) {
-    NavHost(navController, startDestination = MapTruck.route) {
+   // NavHost(navController, startDestination = MapTruck.route) {
+    NavHost(navController, startDestination = "splash_screen") {
+        composable("splash_screen") {
+            SplashScreen(navController)
+        }
 
         composable(
             MapTruck.route,

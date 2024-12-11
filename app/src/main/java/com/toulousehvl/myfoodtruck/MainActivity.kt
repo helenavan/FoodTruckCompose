@@ -1,8 +1,6 @@
 package com.toulousehvl.myfoodtruck
 
-import android.os.Build
 import android.os.Bundle
-import android.view.View
 import android.view.Window
 import android.view.WindowInsetsController
 import androidx.activity.ComponentActivity
@@ -108,7 +106,6 @@ fun MainScreen(
                 titleContentColor = Color.White
             ),
                 title = {
-                    //TODO
                     DisplayLogo()
                 }
             )
@@ -167,22 +164,12 @@ fun ComponentActivity.setStatusBarColor(
     window.statusBarColor = color.toArgb()
 
     // Check if we're on Android 11 (API 30) or later to set the status bar icon color
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-        val controller = window.insetsController
-        if (controller != null) {
-            controller.setSystemBarsAppearance(
-                if (darkIcons) WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS else 0,
-                WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS
-            )
-        }
-    } else {
-        // For Android 10 and below, set decor view system UI visibility flags
-        @Suppress("DEPRECATION")
-        window.decorView.systemUiVisibility = if (darkIcons) {
-            window.decorView.systemUiVisibility or View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
-        } else {
-            window.decorView.systemUiVisibility and View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR.inv()
-        }
+    val controller = window.insetsController
+    if (controller != null) {
+        controller.setSystemBarsAppearance(
+            if (darkIcons) WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS else 0,
+            WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS
+        )
     }
 }
 
