@@ -16,8 +16,8 @@ android {
         applicationId = "com.toulousehvl.myfoodtruck"
         minSdk = 31
         targetSdk = 35
-        versionCode = 3
-        versionName = "2.1"
+        versionCode = 8
+        versionName = "2.2"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
