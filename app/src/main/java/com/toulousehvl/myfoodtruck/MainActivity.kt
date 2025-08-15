@@ -180,7 +180,7 @@ fun SetStatusBarColor(activity: ComponentActivity) {
 
 @Composable
 fun DisplayLogo() {
-    Column() {
+    Column {
         BannerConnexionError()
         Spacer(modifier = Modifier.height(6.dp))
         Image(

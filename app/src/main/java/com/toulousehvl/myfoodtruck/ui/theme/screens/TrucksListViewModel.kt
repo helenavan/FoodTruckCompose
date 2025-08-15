@@ -174,7 +174,7 @@ class TrucksListViewModel @Inject constructor(private val truckRepositoryImpl: T
 
     private suspend fun addDataToFirestore(truck: Truck) {
         isLoading = true
-        when (val result = truckRepositoryImpl.addTruck(truck)) {
+        when (truckRepositoryImpl.addTruck(truck)) {
             is ResultWrapper.Success -> {
                 fetchDataFromFirestore()
                 foodTruckName = ""

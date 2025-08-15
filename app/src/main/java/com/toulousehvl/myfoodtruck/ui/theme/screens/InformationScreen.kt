@@ -32,6 +32,15 @@ import com.toulousehvl.myfoodtruck.R
 import com.toulousehvl.myfoodtruck.ui.theme.composables.CustomTextField
 import com.toulousehvl.myfoodtruck.ui.theme.composables.DropdownMenuWithFocus
 
+/**
+ * A composable function that displays the information screen for adding a food truck.
+ *
+ * This screen allows the user to input the food truck's name, select a category,
+ * and enter the address. It uses a ViewModel to manage the state and logic.
+ *
+ * @param viewModel The ViewModel responsible for managing the information screen's state and actions.
+ *                  By default, it uses [hiltViewModel] to inject the [InformationViewModel].
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun InformationScreen(viewModel: InformationViewModel = hiltViewModel()) {

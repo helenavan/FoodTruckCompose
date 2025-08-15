@@ -244,7 +244,7 @@ fun setColorToTruck(context: Context, categorie: String): Int {
 
 fun centerMapOnUserLocation(
     mLocationOverlay: MyLocationNewOverlay?,
-    mapView: org.osmdroid.views.MapView,
+    mapView: MapView,
     onUserLocation: (GeoPoint) -> Unit
 ) {
     mLocationOverlay?.myLocation?.let { userLocation ->
@@ -257,7 +257,7 @@ fun centerMapOnUserLocation(
 
 fun centerMapOnTruckLocation(
     truckId: String?,
-    mapView: org.osmdroid.views.MapView,
+    mapView: MapView,
     viewModel: TrucksListViewModel
 ) {
     if (truckId != null) {
